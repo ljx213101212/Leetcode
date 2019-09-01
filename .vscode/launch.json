@@ -24,7 +24,7 @@
             },
             "windows":{
                 "MIMode": "gdb",
-                "args": [],
+                "args": ["-exec -enable-pretty-printing"],
                 "stopAtEntry": true,
                 "externalConsole": false,
                 "program": "${workspaceFolder}/main.exe",
