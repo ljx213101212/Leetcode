@@ -1,0 +1,24 @@
+{
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-g",
+                "-std=c++14",
+                "-stdlib=libc++",
+                "922/922.cpp",
+                "main.cpp", // main file  "35.cpp",
+                "-o",
+                "main.out",
+                "-v"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ],
+    "version": "2.0.0"
+}
