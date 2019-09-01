@@ -17,5 +17,19 @@ Normally this sort of failure happens when compiling your C++ code by invoking t
 在922/922.cpp 里面 vector<int> Solution::sortArrayByParityII
 我原来写成了 vector<int> sortArrayByParityII， 成员函数实现的时候忘记申明类修饰符
 
-##clang++ command:
+
+
+## Win 64 GDB STL support
+### https://codeyarns.com/2014/07/17/how-to-enable-pretty-printing-for-stl-in-gdb/
+python
+import sys
+sys.path.insert(0, '/home/joe/stlprettyprinter')
+from libstdcxx.v6.printers import register_libstdcxx_printers
+register_libstdcxx_printers (None)
+end
+
+## clang++ command:
+### Mac OS
 clang++ -g -std=c++11 922/922.cpp main.cpp -o main.out
+### Win 64 （open VS code in admin mode)
+g++ -g -I include 922/922.cpp -o main main.cpp
