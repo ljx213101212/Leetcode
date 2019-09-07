@@ -25,12 +25,10 @@
             "command": "g++",
             "args": [
                 "-g",
-                "-I",
-                "include",
-                "832/832.cpp",
+                "src/Array/832.cpp",
                 "-o",
                 "main",
-                "main.cpp"
+                "src/main.cpp"
             ],
             "group": {
                 "kind": "build",

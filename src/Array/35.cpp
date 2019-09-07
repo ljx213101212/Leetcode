@@ -1,4 +1,4 @@
-#include "../include/35.hpp"
+#include "35.hpp"
 
 int searchInsert(vector<int> &nums, int target)
 {

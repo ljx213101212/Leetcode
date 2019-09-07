@@ -1,4 +1,4 @@
-#include "../pch.h"
+#include "pch.h"
 
 class Solution {
 public:
