@@ -1,9 +1,9 @@
 #include "pch.h"
-#include "Array/832.hpp"
+#include "Array/905.hpp"
 
 int main(){
     Solution * sol = new Solution();
-    vector<vector<int>> input = {{1,1,0},{1,0,1},{0,0,0}};
-    vector<vector<int>> output = sol->flipAndInvertImage(input);
+    vector<int> input = {3,1,2,4};
+    vector<int> output = sol->sortArrayByParity(input);
     return 0;
 }
