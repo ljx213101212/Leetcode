@@ -19,6 +19,11 @@ m is month (1 = March, ..., 10 = December, 11 = Jan, 12 = Feb) Treat Jan & Feb a
 C is century (1987 has C = 19)
 Y is year (1987 has Y = 87 except Y = 86 for Jan & Feb)
 W is week day (0 = Sunday, ..., 6 = Saturday)
+ https://cs.uwaterloo.ca/~alopez-o/math-faq/node73.html
+ */
+
+/**
+ * Error answer
  */
 string Solution::dayOfTheWeek(int day, int month, int year){
         int C = year / 100;
