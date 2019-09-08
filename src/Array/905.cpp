@@ -3,8 +3,8 @@
 /**
  * Runtime: 60 ms, faster than 9.28% of C++ online submissions for Sort Array By Parity.
  * Memory Usage: 10 MB, less than 32.76% of C++ online submissions for Sort Array By Parity.
- * 
- * O(n)  S(n)
+ * O(n)
+ * S(n)
  * 
  * @description 
  * 知识点考察：

@@ -1,3 +1,6 @@
 [credential]
 	helper = wincred
 	username = ljx213101212
+[user]
+	name = ljx213101212
+	email = lijixiang.nus@gmail.com

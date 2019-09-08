@@ -1,9 +1,11 @@
 #include "pch.h"
-#include "Array/905.hpp"
+#include "Math/5183.hpp"
 
 int main(){
     Solution * sol = new Solution();
-    vector<int> input = {3,1,2,4};
-    vector<int> output = sol->sortArrayByParity(input);
+    int year = 2019;
+    int month = 9;
+    int day = 8;
+    string output = sol->dayOfTheWeek(day,month,year);
     return 0;
 }
