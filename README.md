@@ -31,6 +31,12 @@ from libstdcxx.v6.printers import register_libstdcxx_printers
 register_libstdcxx_printers (None)
 end
 
+## Debugger hangs starting gdb.exe on Windows 10 with UTF-8 enabled.
+### 解决方案:
+https://github.com/microsoft/vscode-cpptools/issues/3353
+https://github.com/Microsoft/vscode-cpptools/issues/1527
+I disable unicode support on Windows codepage settings, now it works.
+
 ## clang++ command:
 ### Mac OS
 clang++ -g -std=c++11 922/922.cpp main.cpp -o main.out

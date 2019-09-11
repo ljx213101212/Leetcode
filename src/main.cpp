@@ -1,11 +1,10 @@
 #include "pch.h"
-#include "Math/5183.hpp"
+#include "Array/977.hpp"
 
 int main(){
     Solution * sol = new Solution();
-    int year = 2019;
-    int month = 9;
-    int day = 8;
-    string output = sol->dayOfTheWeek(day,month,year);
+
+    vector<int> input = {-7,-3,2,3,11};
+    vector<int> output = sol->sortedSquares_2(input);
     return 0;
 }
