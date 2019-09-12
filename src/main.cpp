@@ -1,10 +1,10 @@
 #include "pch.h"
-#include "Array/977.hpp"
+#include "Array/1051.hpp"
 
 int main(){
     Solution * sol = new Solution();
 
-    vector<int> input = {-7,-3,2,3,11};
-    vector<int> output = sol->sortedSquares_2(input);
+    vector<int> input = {1,1,4,2,1,3};
+    int output = sol->heightChecker(input);
     return 0;
 }

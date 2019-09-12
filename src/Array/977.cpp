@@ -1,6 +1,10 @@
 
 #include "977.hpp"
 
+/**
+ * vector<int> input = {-7,-3,2,3,11};
+    vector<int> output = sol->sortedSquares_2(input);
+ */
 
 /**
  * Runtime: 128 ms, faster than 13.62% of C++ online submissions for Squares of a Sorted Array.

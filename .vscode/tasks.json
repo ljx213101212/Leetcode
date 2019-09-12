@@ -25,7 +25,7 @@
             "command": "g++",
             "args": [
                 "-g",
-                "src/Array/977.cpp",
+                "src/Array/1051.cpp",
                 "-o",
                 "main",
                 "src/main.cpp"
