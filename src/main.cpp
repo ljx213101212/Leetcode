@@ -1,10 +1,17 @@
 #include "pch.h"
-#include "Array/1051.hpp"
+#include "Stack/1190.h"
 
 int main(){
     Solution * sol = new Solution();
 
-    vector<int> input = {1,1,4,2,1,3};
-    int output = sol->heightChecker(input);
+// "a(bcdefghijkl(mno)p)q"
+//"(abcd)"
+//"ta()usw((((a))))"
+//"vdgzyj()"
+    string input = "vdgzyj()";
+    input = "ta()usw((((a))))";
+    string output = sol->reverseParentheses(input);
     return 0;
 }
+
+

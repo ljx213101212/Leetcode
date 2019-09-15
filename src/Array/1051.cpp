@@ -1,6 +1,13 @@
 #include "1051.hpp"
 
 /**
+ *     Solution * sol = new Solution();
+
+    vector<int> input = {1,1,4,2,1,3};
+    int output = sol->heightChecker(input);
+ * /
+
+/**
  * 
  * Runtime: 4 ms, faster than 62.82% of C++ online submissions for Height Checker.
 Memory Usage: 8.5 MB, less than 100.00% of C++ online submissions for Height Checker.
