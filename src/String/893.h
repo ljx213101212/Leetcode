@@ -3,6 +3,11 @@ class Solution {
 public:
 
 /**
+ *   vector<string> input = {"abc","acb","bac","bca","cab","cba"};
+    int output = sol->numSpecialEquivGroups(input);
+ */
+
+/**
  * Signature
  * 我实在没有读懂题目 :()
  * 这题是看了别人的答案 看懂之后自己写的
