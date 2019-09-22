@@ -1,11 +1,14 @@
 #include "pch.h"
-#include "Trie/720.h"
+#include "WCPlayGround/xxx.hpp"
 
 int main(){
     
     Solution sol;
-    vector<string> input = {"a", "banana", "app", "appl", "ap", "apply", "apple"};
-    string output = sol.longestWord_2(input);
+
+    string s ="dcab";
+    vector<vector<int>> input = { {3,0}, {1,2} ,{3,1}};
+  
+    string  output = sol.smallestStringWithSwaps_2(s,input);
     return 0;
 }
 
