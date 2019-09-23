@@ -1,6 +1,12 @@
 #include "pch.h"
 class Solution {
 public:
+
+    /**
+     * string s ="dcab";
+    vector<vector<int>> input = { {3,0}, {1,2} ,{3,1}};
+    string  output = sol.smallestStringWithSwaps_2(s,input);
+     */ 
    const static int N = 1e5 + 10;
      //辅助分组数组
      int f[N];

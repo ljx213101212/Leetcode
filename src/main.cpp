@@ -1,14 +1,12 @@
 #include "pch.h"
-#include "WCPlayGround/xxx.hpp"
+#include "Array/1002.h"
 
 int main(){
     
     Solution sol;
-
-    string s ="dcab";
-    vector<vector<int>> input = { {3,0}, {1,2} ,{3,1}};
-  
-    string  output = sol.smallestStringWithSwaps_2(s,input);
+    vector<string> A = {"cool","lock","cook"};
+    vector<string> output = sol.commonChars(A);
+ 
     return 0;
 }
 
