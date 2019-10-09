@@ -5,6 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "node",
+            "request": "launch",
+            "name": "Test Promise",
+            "program": "${workspaceFolder}/src/MyLab/promise.js"
+        },
+        {
             "name": "C++ Launch",
             "type": "cppdbg",
             "request": "launch",
