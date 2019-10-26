@@ -1,8 +1,8 @@
 # Categories
-⋅⋅* Dynamic Programing
+* Dynamic Programing
 1. 顺序区间
-...* [Normal - 1130](https://github.com/ljx213101212/Leetcode/blob/master/src/DynamicPrograming/1130.h)
-...* [Normal - 877](https://github.com/ljx213101212/Leetcode/blob/master/src/DynamicPrograming/877.h)
+- [Normal - 1130](https://github.com/ljx213101212/Leetcode/blob/master/src/DynamicPrograming/1130.h)
+- [Normal - 877](https://github.com/ljx213101212/Leetcode/blob/master/src/DynamicPrograming/877.h)
 
 # To do
 加入Google Test, 学习并掌握test driven development 的工作模式
