@@ -166,4 +166,84 @@ public:
         }
         return res;
      }
+
+    int balancedStringSplit2(string s){
+        int ret = 0;
+        int bal = 0;
+        //L ++, R --
+        for (char c : s){
+            bal = c == 'L' ? ++bal : --bal;
+            if (bal == 0){
+                ret++;
+            }
+        }
+        return ret;
+    }
+
+    int balancedStringSplit(string s) {
+        int ret = 0;
+        vector<int> LS;
+        vector<int> RS;
+        for (char c : s){
+            //add c 
+            if (c == 'L'){
+                LS.push_back(c);
+                if (RS.size() != 0)
+                {
+                    if (LS.size() < RS.size())
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if (LS.size() != 0 &&
+                            RS.size() != 0)
+                        {
+                            ret++;
+                        }
+                        if (LS.size() > RS.size())
+                        {
+                            LS.clear();
+                            RS.clear();
+                            LS.push_back(c);
+                        }
+                        else
+                        {
+                            LS.clear();
+                            RS.clear();
+                        }
+                    }
+                }
+            }else if (c == 'R'){
+                RS.push_back(c);
+                if (LS.size() != 0)
+                {
+                    if (RS.size() < LS.size())
+                    {
+                        continue;
+                    }
+                    else
+                    {
+                        if (LS.size() != 0 &&
+                            RS.size() != 0)
+                        {
+                            ret++;
+                        }
+                        if (RS.size() > LS.size())
+                        {
+                            LS.clear();
+                            RS.clear();
+                            RS.push_back(c);
+                        }
+                        else
+                        {
+                            LS.clear();
+                            RS.clear();
+                        }
+                    }
+                }
+            }
+        }
+        return ret;
+    }
 };
