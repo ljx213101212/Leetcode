@@ -4,6 +4,10 @@
 - [Normal - 1130](https://github.com/ljx213101212/Leetcode/blob/master/src/DynamicPrograming/1130.h)
 - [Normal - 877](https://github.com/ljx213101212/Leetcode/blob/master/src/DynamicPrograming/877.h)
 
+* Math
+1. Unit distance code/ Gray code/ Circular 
+- [Normal - 1238](https://github.com/ljx213101212/Leetcode/blob/master/src/Math/1238.h)
+
 # To do
 加入Google Test, 学习并掌握test driven development 的工作模式
 
