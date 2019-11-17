@@ -1,10 +1,8 @@
 #include <vector>
 #include <iostream>
-#include <string>
-#include <stdio.h>
-#include <math.h>
-#include <map>
-#include <stack>
-#include <set>
 #include <algorithm>
+#include <math.h>
+#include <set> 
+#include <map>
+#include <memory>
 using namespace std;
