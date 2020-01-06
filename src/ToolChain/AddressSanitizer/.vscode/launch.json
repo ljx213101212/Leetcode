@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/BoringSSLCheck/a.out",
+            "program": "${workspaceFolder}/BoringSSLCheck/mymain",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
