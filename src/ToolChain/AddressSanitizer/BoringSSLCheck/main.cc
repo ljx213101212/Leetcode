@@ -19,8 +19,7 @@ int main(){
     std::vector<uint8_t> public_key_info_vector;
     std::vector<uint8_t> signer_info;
     std::vector<uint8_t> encrypted_digest;
-    // std::unique_ptr<CBS> cbs_input;
-
+    
     CBS cbs_input;
     cbs_input = pkcs7_verifier.GetSignedData();
     bool test_res  = pkcs7_verifier.PKCS7MessageDigestValidation(&cbs_input);
