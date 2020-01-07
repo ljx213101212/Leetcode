@@ -1,24 +1,22 @@
 	#ifndef CRYPTO_PKCS7_VERIFIER_H_	
 	#define CRYPTO_PKCS7_VERIFIER_H_	
-
 	#include "pch.h"
 		
 	namespace crypto {	
-		
-	//#define PKCS7_type_is_signed(a) (OBJ_obj2nid((a)->type) == NID_pkcs7_signed)	
+        
 	class PKCS7Verifier {	
 	 public:	
-	    PKCS7Verifier(const unsigned char* data , size_t len);	
+	    PKCS7Verifier(const uint8_t* data , size_t len);	
 	    ~PKCS7Verifier();	
 	    static int PKCS7ParseHeader(uint8_t **der_bytes, CBS *out, CBS *cbs);	
-	    std::unique_ptr<CBS> SignedData();	
-	    void ResetSignedData(const unsigned char* data, size_t len);	
+        CBS GetSignedData();	
+	    void ResetSignedData(const uint8_t* data, size_t len);	
 	    /**	
 	     * Message Digest Verification	
 	     */	
 	    bool PKCS7GetMessageDigestValue(CBS* in_signed_data, std::vector<uint8_t>& out_message_digest);	
 	    bool PKCS7GetContentInfo(CBS* in_signed_data, std::vector<uint8_t>& out_content_info);	
-	    bool PKCS7EVPMessageDigest(const unsigned char* message, size_t message_len, uint8_t digest[], unsigned int* digest_len);
+	    bool PKCS7EVPMessageDigest(const uint8_t* message, size_t message_len, uint8_t digest[], unsigned int* digest_len);
 	    bool PKCS7MessageDigestValidation(CBS* in_signed_data);	
 	    /**	
 	     * Signature Verification	

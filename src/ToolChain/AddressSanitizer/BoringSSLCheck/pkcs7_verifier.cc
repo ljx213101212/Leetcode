@@ -9,14 +9,14 @@
 		
 namespace crypto{	
             
-PKCS7Verifier::PKCS7Verifier(const unsigned char* data , size_t len){		
+PKCS7Verifier::PKCS7Verifier(const uint8_t* data , size_t len){		
     ResetSignedData(data, len);	
 }	
-// PKCS7Verifier::PKCS7Verifier() = default;	
 PKCS7Verifier::~PKCS7Verifier() = default;   	
     
-//static (ASAN pass)	
-int PKCS7Verifier::PKCS7ParseHeader(uint8_t **der_bytes, CBS *out, CBS *cbs){	
+//static
+//See boringssl/src/crypto/pkcs7/pkcs7.c
+int PKCS7Verifier::PKCS7ParseHeader(uint8_t** der_bytes, CBS* out, CBS*cbs){	
     
     CBS in, content_info, content_type, wrapped_signed_data, signed_data;	
     uint64_t version;	
@@ -47,15 +47,17 @@ int PKCS7Verifier::PKCS7ParseHeader(uint8_t **der_bytes, CBS *out, CBS *cbs){
     CBS_init(out, CBS_data(&signed_data), CBS_len(&signed_data));	
     return 1;	
 }	
-    
+
+//Reset signed data.    
 void PKCS7Verifier::ResetSignedData(const unsigned char* data, size_t len){	
-    signed_data_.assign(data,data+len);
+    signed_data_.assign(data, data + len);
 }	
-    
-std::unique_ptr<CBS> PKCS7Verifier::SignedData(){	
-    std::unique_ptr<CBS> signed_data;	
-    signed_data.reset(new CBS);	
-    CBS_init(signed_data.get(), signed_data_.data(), signed_data_.size());	
+
+// CBS member -> *data address changes by executing CBS_get_asn1, so need a refresh method to reload the ptr back to start.
+// Get new signed data CBS (Reset data chunk ptr to start)
+CBS PKCS7Verifier::GetSignedData(){	
+    CBS signed_data;	
+    CBS_init(&signed_data, signed_data_.data(), signed_data_.size());	
     return signed_data;	
 }	
     
