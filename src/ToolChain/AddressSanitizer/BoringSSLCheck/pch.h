@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <algorithm>
 #include <string>
+#include <string.h>
 #include <iostream>
 #include <stdlib.h>
 

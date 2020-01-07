@@ -6,6 +6,7 @@ const uint8_t kPKCS7SignedData[9] = {0x2a, 0x86, 0x48, 0x86, 0xf7,
                                            0x0d, 0x01, 0x07, 0x02};
 
 
+//pass
 int PKCS7ParseHeader(uint8_t **der_bytes, CBS *out, CBS *cbs) {
   CBS in, content_info, content_type, wrapped_signed_data, signed_data;
   uint64_t version;
@@ -32,6 +33,9 @@ int PKCS7ParseHeader(uint8_t **der_bytes, CBS *out, CBS *cbs) {
       !CBS_get_asn1(&signed_data, NULL /* digests */, CBS_ASN1_SET) ||
       !CBS_get_asn1(&signed_data, NULL /* content */, CBS_ASN1_SEQUENCE)) {
     return 0;
+  }
+  if (version < 1) {	
+	    return 0;	
   }
   CBS_init(out, CBS_data(&signed_data), CBS_len(&signed_data));
   return 1;
