@@ -47,7 +47,22 @@ int PKCS7Verifier::PKCS7ParseHeader(uint8_t** der_bytes, CBS* out_cbs, CBS* in_c
     }	
     CBS_init(out_cbs, CBS_data(&signed_data), CBS_len(&signed_data));	
     return 1;	
-}	
+}
+
+//static
+const EVP_MD *PKCS7Verifier::cbs_to_md(const CBS *cbs)
+{
+    for (size_t i = 0; i < kMDOIDsVector.size(); i++)
+    {
+        if (CBS_len(cbs) == kMDOIDsVector[i].oid_len &&
+            memcmp(CBS_data(cbs), kMDOIDsVector[i].oid, kMDOIDsVector[i].oid_len) ==
+                0)
+        {
+            return EVP_get_digestbynid(kMDOIDsVector[i].nid);
+        }
+    }
+    return NULL;
+}
 
 //Reset signed data.    
 void PKCS7Verifier::ResetSignedData(const unsigned char* in_data, size_t in_len){	
@@ -61,7 +76,46 @@ CBS PKCS7Verifier::GetSignedData(){
     CBS_init(&signed_data, signed_data_.data(), signed_data_.size());	
     return signed_data;	
 }	
+
+bool PKCS7Verifier::PKCS7GetDigestAlgorithm(CBS* in_signed_data, CBS* out_cbs) {
+     std::unique_ptr<uint8_t*> der_bytes = std::make_unique<uint8_t*>();	
+    CBS in, content_info, content_type, wrapped_signed_data, signed_data;	
+    CBS spc_indirect_data_wrapper, spc_indirect_data_content_type, wrappered_spc_indirect_data, content_info_value, wrappered_digest_algo, digest_algo, digest_algo_value;	
+    uint64_t version;	
     
+    if (!CBS_asn1_ber_to_der(in_signed_data, &in, der_bytes.get()) ||	
+        // See https://tools.ietf.org/html/rfc2315#section-7	
+        !CBS_get_asn1(&in, &content_info, CBS_ASN1_SEQUENCE) ||	
+        !CBS_get_asn1(&content_info, &content_type, CBS_ASN1_OBJECT)) {	
+        return false;	
+    }	
+    if (!CBS_mem_equal(&content_type, kPKCS7SignedData,	
+        sizeof(kPKCS7SignedData))) {	
+        return false;	
+    }	
+    // See https://tools.ietf.org/html/rfc2315#section-9.1	
+    if(!CBS_get_asn1(&content_info, &wrapped_signed_data,	
+        CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0)){return false;}	
+    if(!CBS_get_asn1(&wrapped_signed_data, &signed_data, CBS_ASN1_SEQUENCE)){return false;}	
+    if(!CBS_get_asn1_uint64(&signed_data, &version)){return false;}	
+    if(!CBS_get_asn1(&signed_data, NULL /* digests */, CBS_ASN1_SET)){return false;}	
+    if(!CBS_get_asn1(&signed_data, &spc_indirect_data_wrapper /* content */, CBS_ASN1_SEQUENCE)){return false;}	
+    if(!CBS_get_asn1(&spc_indirect_data_wrapper, &spc_indirect_data_content_type /* content */, CBS_ASN1_OBJECT)){return false;}	
+    if(!CBS_get_asn1(&spc_indirect_data_wrapper, &wrappered_spc_indirect_data,	
+        CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0)){return false;}	
+    if(!CBS_get_asn1(&wrappered_spc_indirect_data, &content_info_value /* content */, CBS_ASN1_SEQUENCE)){return false;}
+    if(!CBS_get_asn1(&content_info_value, NULL, CBS_ASN1_SEQUENCE)){return false;}	
+    if(!CBS_get_asn1(&content_info_value, &wrappered_digest_algo, CBS_ASN1_SEQUENCE)){return false;}
+    if(!CBS_get_asn1(&wrappered_digest_algo, &digest_algo, CBS_ASN1_SEQUENCE)){return false;}
+    if(!CBS_get_asn1(&digest_algo, &digest_algo_value, CBS_ASN1_OBJECT)){return false;}
+    // See Authenticode_PE, version must be 1.	
+    if (version != 1) {	
+        return false;	
+    }
+    CBS_init(out_cbs, CBS_data(&digest_algo_value), CBS_len(&digest_algo_value));
+    return true;	
+}
+
 //See https://tools.ietf.org/html/rfc2315#section-9.2	
 //See 1.2.840.113549.1.9.4 Authenticode_PE	
 //EncryptedDigest	
@@ -140,10 +194,10 @@ bool PKCS7Verifier::PKCS7GetContentInfo(CBS* in_signed_data, std::vector<uint8_t
 }	
 
 //See boringssl/src/crypto/digest_test.cc (reference)
-bool PKCS7Verifier::PKCS7EVPMessageDigest(const unsigned char* in_message, size_t in_message_len, uint8_t out_digest[], unsigned int* out_digest_len){
+bool PKCS7Verifier::PKCS7EVPMessageDigest(const EVP_MD* in_digest_algorithm, const unsigned char* in_message, size_t in_message_len, uint8_t out_digest[], unsigned int* out_digest_len){
 
     bssl::ScopedEVP_MD_CTX mdctx;
-    if (1 != EVP_DigestInit_ex(mdctx.get(), EVP_sha1(), NULL)){ return false; }
+    if (1 != EVP_DigestInit_ex(mdctx.get(), in_digest_algorithm, NULL)){ return false; }
     if (1 != EVP_DigestUpdate(mdctx.get(), in_message, in_message_len)){ return false; }
     if (1 != EVP_DigestFinal_ex(mdctx.get(), out_digest, out_digest_len)){ return false; }
     return true;
@@ -158,7 +212,7 @@ bool PKCS7Verifier::PKCS7EVPMessageDigest(const unsigned char* in_message, size_
    encoding of that field are digested, not the identifier octets or the
    length octets.
 */
-bool PKCS7Verifier::PKCS7MessageDigestValidation(CBS* in_signed_data){
+bool PKCS7Verifier::PKCS7MessageDigestValidation(CBS* in_signed_data , const EVP_MD* in_digest_algorithm){
 
     CBS cbs_input;
     CBS_init(&cbs_input, CBS_data(in_signed_data), CBS_len(in_signed_data));	
@@ -175,7 +229,7 @@ bool PKCS7Verifier::PKCS7MessageDigestValidation(CBS* in_signed_data){
     //3.Get Content Info Message Digest	
     std::unique_ptr<unsigned char[]>digest = std::make_unique<unsigned char[]>(HASH_DIGEST_LENGTH);	
     unsigned int digest_len;	
-    PKCS7EVPMessageDigest(content_info.data(), content_info.size(),digest.get(), &digest_len);
+    PKCS7EVPMessageDigest(in_digest_algorithm, content_info.data(), content_info.size(),digest.get(), &digest_len);
     //Compare size and content	
     int is_md_Ok = (digest_len == message_digest.size() &&	
                     (0 == memcmp(digest.get(), message_digest.data(), digest_len)));	

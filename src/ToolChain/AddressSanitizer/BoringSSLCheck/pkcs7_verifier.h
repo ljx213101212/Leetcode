@@ -8,16 +8,18 @@
 	 public:	
 	    PKCS7Verifier(const uint8_t* data , size_t len);	
 	    ~PKCS7Verifier();
-	    static int PKCS7ParseHeader(uint8_t** der_bytes, CBS* out_cbs, CBS* in_cbs);	
+	    static int PKCS7ParseHeader(uint8_t** der_bytes, CBS* out_cbs, CBS* in_cbs);
+		static const EVP_MD *cbs_to_md(const CBS *cbs);
         CBS GetSignedData();	
 	    void ResetSignedData(const unsigned char* in_data, size_t in_len);	
 	    /**	
 	     * Message Digest Verification	
 	     */	
+		bool PKCS7GetDigestAlgorithm(CBS* in_signed_data, CBS* out_cbs);
 	    bool PKCS7GetMessageDigestValue(CBS* in_signed_data, std::vector<uint8_t>& out_message_digest);	
 	    bool PKCS7GetContentInfo(CBS* in_signed_data, std::vector<uint8_t>& out_content_info);	
-	    bool PKCS7EVPMessageDigest(const unsigned char* in_message, size_t in_message_len, uint8_t out_digest[], unsigned int* out_digest_len);
-	    bool PKCS7MessageDigestValidation(CBS* in_signed_data);	
+	    bool PKCS7EVPMessageDigest(const EVP_MD* in_digest_algorithm, const unsigned char* in_message, size_t in_message_len, uint8_t out_digest[], unsigned int* out_digest_len);
+	    bool PKCS7MessageDigestValidation(CBS* in_signed_data , const EVP_MD* in_digest_algorithm);	
 	    /**	
 	     * Signature Verification	
 	     */	

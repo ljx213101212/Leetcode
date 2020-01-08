@@ -15,5 +15,11 @@ namespace crypto{
     extern const size_t kICOHeaderSize;
     extern const size_t HASH_DIGEST_LENGTH;
     extern const uint8_t kPKCS7SignedData[9];//1.2.840.113549.1.7.2
+    struct kMDOIDs{
+        uint8_t oid[9];
+        uint8_t oid_len;
+        int nid;
+    };
+    extern const std::vector<struct kMDOIDs> kMDOIDsVector;
 }
 #endif
