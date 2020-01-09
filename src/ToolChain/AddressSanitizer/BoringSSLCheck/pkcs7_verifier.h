@@ -11,7 +11,14 @@
 	    static int PKCS7ParseHeader(uint8_t** der_bytes, CBS* out_cbs, CBS* in_cbs);
 		static const EVP_MD *cbs_to_md(const CBS *cbs);
         CBS GetSignedData();	
-	    void ResetSignedData(const unsigned char* in_data, size_t in_len);	
+	    void ResetSignedData(const unsigned char* in_data, size_t in_len);
+
+		/**
+		 * File Content Digest Verification
+		 */
+		bool PKCS7GetSpcIndirectDataContentDigestValue(CBS* in_signed_data, CBS* out_digest);
+		bool PKCS7FileContentDigestVerification(CBS* in_signed_data, CBS* in_file_digest); 	
+	
 	    /**	
 	     * Message Digest Verification	
 	     */	

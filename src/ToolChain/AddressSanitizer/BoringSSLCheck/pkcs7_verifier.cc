@@ -75,7 +75,59 @@ CBS PKCS7Verifier::GetSignedData(){
     CBS signed_data;	
     CBS_init(&signed_data, signed_data_.data(), signed_data_.size());	
     return signed_data;	
-}	
+}
+
+bool PKCS7Verifier::PKCS7GetSpcIndirectDataContentDigestValue(CBS* in_signed_data, CBS* out_digest){
+
+    std::unique_ptr<uint8_t*> der_bytes = std::make_unique<uint8_t*>();	
+    CBS in, content_info, content_type, wrapped_signed_data, signed_data;	
+    CBS spc_indirect_data_wrapper, spc_indirect_data_content_type, wrappered_spc_indirect_data, content_info_value, spc_indirect_data_content_digest, spc_indirect_data_content_digest_value;	
+    uint64_t version;	
+    
+    if (!CBS_asn1_ber_to_der(in_signed_data, &in, der_bytes.get()) ||	
+        // See https://tools.ietf.org/html/rfc2315#section-7	
+        !CBS_get_asn1(&in, &content_info, CBS_ASN1_SEQUENCE) ||	
+        !CBS_get_asn1(&content_info, &content_type, CBS_ASN1_OBJECT)) {	
+        return false;	
+    }	
+    if (!CBS_mem_equal(&content_type, kPKCS7SignedData,	
+        sizeof(kPKCS7SignedData))) {	
+        return false;	
+    }	
+    // See https://tools.ietf.org/html/rfc2315#section-9.1	
+    if(!CBS_get_asn1(&content_info, &wrapped_signed_data,	
+        CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0)){return false;}	
+    if(!CBS_get_asn1(&wrapped_signed_data, &signed_data, CBS_ASN1_SEQUENCE)){return false;}	
+    if(!CBS_get_asn1_uint64(&signed_data, &version)){return false;}	
+    if(!CBS_get_asn1(&signed_data, NULL, CBS_ASN1_SET)){return false;}	
+    if(!CBS_get_asn1(&signed_data, &spc_indirect_data_wrapper, CBS_ASN1_SEQUENCE)){return false;}	
+    if(!CBS_get_asn1(&spc_indirect_data_wrapper, &spc_indirect_data_content_type, CBS_ASN1_OBJECT)){return false;}	
+    if(!CBS_get_asn1(&spc_indirect_data_wrapper, &wrappered_spc_indirect_data,	
+        CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0)){return false;}	
+    if(!CBS_get_asn1(&wrappered_spc_indirect_data, &content_info_value, CBS_ASN1_SEQUENCE)){return false;}	
+    if(!CBS_get_asn1(&content_info_value, NULL, CBS_ASN1_SEQUENCE)){return false;}
+    if(!CBS_get_asn1(&content_info_value, &spc_indirect_data_content_digest, CBS_ASN1_SEQUENCE)){return false;}
+    if(!CBS_get_asn1(&spc_indirect_data_content_digest, NULL, CBS_ASN1_SEQUENCE)){return false;}
+    if(!CBS_get_asn1(&spc_indirect_data_content_digest, &spc_indirect_data_content_digest_value, CBS_ASN1_OCTETSTRING)){return false;}
+    // See Authenticode_PE, version must be 1.	
+    if (version != 1) {	
+        return false;	
+    }
+    CBS_init(out_digest, CBS_data(&spc_indirect_data_content_digest_value), CBS_len(&spc_indirect_data_content_digest_value));
+    return true;	
+}
+
+bool PKCS7Verifier::PKCS7FileContentDigestVerification(CBS* in_signed_data, CBS* in_file_digest) {
+    //Get digest from signed_data (signature)
+    CBS spc_indirect_data_content_digest;
+    PKCS7GetSpcIndirectDataContentDigestValue(in_signed_data, &spc_indirect_data_content_digest);
+    //compare length
+    bool is_length_ok = CBS_len(&spc_indirect_data_content_digest) == CBS_len(in_file_digest);
+    //compare content
+    bool is_content_ok = memcmp(CBS_data(&spc_indirect_data_content_digest),CBS_data(in_file_digest), CBS_len(in_file_digest));
+    //Both equal then OK
+    return is_length_ok && is_content_ok;
+}
 
 bool PKCS7Verifier::PKCS7GetDigestAlgorithm(CBS* in_signed_data, CBS* out_cbs) {
      std::unique_ptr<uint8_t*> der_bytes = std::make_unique<uint8_t*>();	
@@ -206,7 +258,7 @@ bool PKCS7Verifier::PKCS7EVPMessageDigest(const EVP_MD* in_digest_algorithm, con
 //Compare message_digest from signed_data and Digested Content Info (size compare & memcmp)
 //See https://tools.ietf.org/html/rfc2315#section-9.3 
 /*
-   Specifically, the initial input is the contents octets of the DER
+   Specifically, the initial PKCS7FileContentDigestVerificationinput is the contents octets of the DER
    encoding of the content field of the ContentInfo value to which the
    signing process is applied. Only the contents octets of the DER
    encoding of that field are digested, not the identifier octets or the

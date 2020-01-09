@@ -12,6 +12,7 @@ using namespace std;
 int main(){
 
     std::string filePath = "/home/jixiang/Documents/code/Leetcode/src/ToolChain/AddressSanitizer/BoringSSLCheck/keyboard_dark_sha256_signature";
+    std::string icoPath = "";
     std::ifstream input(filePath, std::ios::binary);
     std::vector<char> buffer(std::istreambuf_iterator<char>(input),{});
     const unsigned char* pCertificate = reinterpret_cast<unsigned char*>(buffer.data());
@@ -22,6 +23,10 @@ int main(){
         std::vector<uint8_t> signer_info;
         std::vector<uint8_t> encrypted_digest;
 
+        // File Content Verification
+        //pkcs7_verifier.PKCS7FileContentDigestVerification(&cbs_input, )
+
+        // Signature Verification
         CBS cbs_input;
         cbs_input = pkcs7_verifier.GetSignedData();
         CBS cbs_algo;
