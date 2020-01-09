@@ -9,6 +9,7 @@ namespace crypto{
     const std::string kPNGIEndChunkType ="IEND";
     const size_t kPNGChunkLengthSize = 4;
     const size_t kPNGChunkTypeSize = 4;
+    const size_t kPNGChunkCRCSize = 4; 
     const unsigned char kPngSignature[kPNGHeaderSize] = { 0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A};
     const size_t kICOHeaderSize = 3 * sizeof(uint16_t); //6
     const size_t HASH_DIGEST_LENGTH = EVP_MD_size(EVP_sha256());//40

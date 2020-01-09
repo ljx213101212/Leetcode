@@ -11,6 +11,7 @@ namespace crypto{
     extern const std::string kPNGIEndChunkType;
     extern const size_t kPNGChunkLengthSize;
     extern const size_t kPNGChunkTypeSize;
+    extern const size_t kPNGChunkCRCSize;
     extern const unsigned char kPngSignature[8];
     extern const size_t kICOHeaderSize;
     extern const size_t HASH_DIGEST_LENGTH;

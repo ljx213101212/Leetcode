@@ -20,13 +20,14 @@ class CRYPTO_EXPORT PKCS7Png {
  public:
    PKCS7Png(base::FilePath file_path);
    ~PKCS7Png();
+   int64_t getFileSize();
    base::File getFile();  
    bool getSignedFileDigest(size_t &file_digest_size, uint8_t *file_digest);
-   int64_t getFileSize();
+   bool getFileContentDigest(size_t &out_file_content_digest_size, uint8_t *out_file_content_digest);
 
  private:
     base::FilePath file_path_;
-
+    bool hashFileContent(base::File* inout_file, EVP_MD_CTX* inout_ctx);
 };
 
 }  // namespace crypto

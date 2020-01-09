@@ -83,4 +83,58 @@ namespace crypto{
         }
         return false;
     }
+
+    //private
+    //See https://www.w3.org/TR/2003/REC-PNG-20031110/#5Chunk-layout
+    bool PKCS7Png::hashFileContent(base::File* file, EVP_MD_CTX* ctx){
+        if (NULL == file ||
+            NULL == ctx) { return false; }
+        
+        char data_read[kBufferSize];
+        //Hash header
+        if (file.ReadAtCurrentPos(data_read, kPNGHeaderSize) <= 0) { return false; }
+        if (1 != EVP_DigestUpdate(ctx, data_read, kPNGHeaderSize)){ return false; }
+        //Hash body
+
+        size_t bytes_read;
+        //Read until file reach the end.
+        while((bytes_read = file.ReadAtCurrentPos(data_read, kPNGHeaderSize)) > 0){
+            
+            //when the file is corrupted.
+            if (bytes_read != kPNGHeaderSize) { return false;}
+            //See https://www.w3.org/TR/2003/REC-PNG-20031110/#7Integers-and-byte-order
+            //(network byte order)big-endian 
+            const unsigned size_t size = data_read[3] | data_read[2] << 8 | data_read[1] << 16 | data_read [0] << 24;
+            const unsigned char* tag = ((char*)&buffer[4]);
+
+            //If find the signature chunk, skip this chunk, do not hash this part.
+            if (0 == memcmp(tag, kPNGSigChunkType, kPNGChunkTypeSize)){
+                if (file.Seek(base::File::FROM_CURRENT, size + kPNGChunkCRCSize) == kInvalidSetFilePointer){ return false; }
+                continue;
+            }
+            //hash current chunk header (LENGTH chunk + TYPE chunk)
+            if (1 != EVP_DigestUpdate(ctx, data_read, kPNGHeaderSize)){ return false; }
+            for (size_t chunk_id = 0; chunk_id / kBufferSize; chunk_id++){
+                if (file.ReadAtCurrentPos(data_read, kBufferSize) <= 0) { return false; }
+                if (1 != EVP_DigestUpdate(ctx, data_read, kBufferSize)){ return false; }
+            }
+            //hash reminder data(below kBufferSize part) + CRC CHUNK 
+            size_t remainderSize = (size % kBufferSize) + kPNGChunkCRCSize;
+            if (file.ReadAtCurrentPos(data_read, remainderSize) <= 0) { return false; }
+            if (1 != EVP_DigestUpdate(ctx, data_read, remainderSize)){ return false; }
+        }
+    }
+
+    bool PKCS7Png::getFileContentDigest(const EVP_MD* in_digest_algorithm, size_t &out_file_content_digest_size, uint8_t *out_file_content_digest){
+        
+        bssl::ScopedEVP_MD_CTX mdctx;
+        if (1 != EVP_DigestInit_ex(mdctx.get(), in_digest_algorithm, NULL)){ return false; }
+        base::File file = getFile();
+        if (file.Seek(base::File::FROM_BEGIN, kPNGHeaderSize) == kInvalidSetFilePointer){
+            return false;
+        }
+        hashFileContent(&file, mdctx.get());
+        if (1 != EVP_DigestFinal_ex(mdctx.get(), out_file_content_digest, out_file_content_digest_size)){ return false; }
+        return true;
+    }
 }
