@@ -6,6 +6,8 @@
 // #include "openssl/base.h"
 // g++ -Wall -fsanitize=address -std=c++14 -g3 -o mymain pkcs7_constant.cc pkcs7_verifier.cc main.cc -L/home/jixiang/Documents/code/Leetcode/src/ToolChain/AddressSanitizer/BoringSSLCheck/lib -lcrypto -I/home/jixiang/Documents/tools/boringssl/include -I/home/jixiang/Documents/tools/boringssl/crypto
 // export LD_LIBRARY_PATH=/home/jixiang/Documents/code/Leetcode/src/ToolChain/AddressSanitizer/BoringSSLCheck/lib:$LD_LIBRARY_PATH
+// generate ASAN report:
+// ASAN_OPTIONS=log_path=mylog.log ./mymain
 using namespace std;
 
 
@@ -25,7 +27,7 @@ int main(){
 
         // File Content Verification
         //pkcs7_verifier.PKCS7FileContentDigestVerification(&cbs_input, )
-
+       
         // Signature Verification
         CBS cbs_input;
         cbs_input = pkcs7_verifier.GetSignedData();

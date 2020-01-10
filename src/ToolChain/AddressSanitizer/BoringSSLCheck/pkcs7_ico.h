@@ -2,7 +2,7 @@
 #define CRYPTO_PKCS7_ICO_H_
 
 #include "build/build_config.h"
-#include "crypto/crypto_export.h"
+
 #include "base/win/scoped_handle.h"
 #include "base/base_paths.h"
 #include "base/files/file.h"
@@ -11,6 +11,7 @@
 #include "base/files/scoped_file.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/path_service.h"
+#include "crypto/crypto_export.h"
 
 
 namespace crypto {
@@ -27,34 +28,6 @@ typedef struct IcoFileInfo_
     size_t png_chunk_size;
 }IcoFileInfo;
 
-// typedef struct
-// {
-// 	unsigned long	dwBytes;
-// 	unsigned long	dwOffset;
-// } RESOURCEPOSINFO, * LPRESOURCEPOSINFO;
-
-// typedef struct
-// {
-// 	unsigned char	bWidth;               // Width of the image
-// 	unsigned char	bHeight;              // Height of the image (times 2)
-// 	unsigned char	bColorCount;          // Number of colors in image (0 if >=8bpp)
-// 	unsigned char	bReserved;            // Reserved
-// 	unsigned short	wPlanes;              // Color Planes
-// 	unsigned short	wBitCount;            // Bits per pixel
-// 	unsigned long	dwBytesInRes;         // how many bytes in this resource?
-// 	unsigned short	nID;                  // the ID
-// } MEMICONDIRENTRY, * LPMEMICONDIRENTRY;
-
-// These next two structs represent how the icon information is stored
-// in an ICO file.
-// typedef struct
-// {
-// 	unsigned short			idReserved;   // Reserved
-// 	unsigned short			idType;       // resource type (1 for icons)
-// 	unsigned short			idCount;      // how many images?
-// 	MEMICONDIRENTRY	idEntries[1]; // the entries for each image
-// } MEMICONDIR, * LPMEMICONDIR;
-
 typedef struct
 {
 	unsigned char	bWidth;               // Width of the image
@@ -66,14 +39,6 @@ typedef struct
 	unsigned long	dwBytesInRes;         // how many bytes in this resource?
 	unsigned long	dwImageOffset;        // where in the file is this image
 } ICONDIRENTRY, * LPICONDIRENTRY;
-
-// typedef struct
-// {
-// 	unsigned short			idReserved;   // Reserved
-// 	unsigned short			idType;       // resource type (1 for icons)
-// 	unsigned short			idCount;      // how many images?
-// 	ICONDIRENTRY	idEntries[1]; // the entries for each image
-// } ICONDIR, * LPICONDIR;
 
 // The following two structs are for the use of this program in
 // manipulating icons. They are more closely tied to the operation
@@ -101,16 +66,17 @@ typedef struct
 
 //Input scoped_fio.
 class CRYPTO_EXPORT PKCS7Ico {
- public:
+public:
    PKCS7Ico(base::FilePath file_path);
    ~PKCS7Ico();
    static size_t GetFileCurrentPos(base::File& file); 
+   int64_t getFileSize();
    base::File getFile();
    bool CheckPngSignature(unsigned char* chunkData); 
    int ReadIcoImageNumber();
    bool GetIcoFileInfo(IcoFileInfo *info); 
    bool getSignedFileDigest(size_t &file_digest_size, uint8_t *file_digest);
-   int64_t getFileSize();
+   bool getFileContentDigest(size_t &out_file_content_digest_size, uint8_t *out_file_content_digest);
 
  private:
     base::FilePath file_path_;

@@ -3,14 +3,6 @@
 
 namespace crypto{
     
-    // static const size_t kPNGHeaderSize = 8;
-    // static const long kInvalidSetFilePointer = -1;
-    // static const size_t kBufferSize = 0x1000;
-    // static const std::string kPNGSigChunkType("iTXt");
-    // static const std::string kPNGIEndChunkType("IEND");
-    // static const size_t kPNGChunkTypeSize = 4;
-    // static const unsigned char kPngSignature[kPNGHeaderSize] = { 0x89,0x50,0x4E,0x47,0x0D,0x0A,0x1A,0x0A};
-
     PKCS7Ico::PKCS7Ico(base::FilePath file_path){
         file_path_ = file_path;
     }
@@ -69,14 +61,8 @@ namespace crypto{
             return false;
         }
         // Adjust the size of the struct to account for the images
-        // lpIR_ptr.reset(new ICONRESOURCE[sizeof(ICONRESOURCE) + ((lpIR->nNumImages - 1) * sizeof(ICONIMAGE))]);
-        // lpIR = lpIR_ptr.get();
-        // std::realloc(lpIR, sizeof(ICONRESOURCE) + ((lpIR->nNumImages - 1) * sizeof(ICONIMAGE)));
         lpIR->IconImages = std::make_unique<ICONIMAGE[]>(sizeof(ICONRESOURCE) + ((lpIR->nNumImages - 1) * sizeof(ICONIMAGE)));
         // Allocate enough memory for the icon directory entries
-        // lpIDE_ptr.reset(new ICONDIRENTRY[lpIR->nNumImages * sizeof(ICONDIRENTRY)]);
-        // lpIDE = lpIDE_ptr.get();
-        // std::realloc(lpIDE, lpIR->nNumImages * sizeof(ICONDIRENTRY));
         lpIDE_ptr.reset(new ICONDIRENTRY[lpIR->nNumImages * sizeof(ICONDIRENTRY)]);
         lpIDE = lpIDE_ptr.get();
         // Read in the icon directory entries
@@ -95,7 +81,6 @@ namespace crypto{
             lpIR->IconImages.get()[i].lpBits = std::make_unique<unsigned char far[]>(lpIDE[i].dwBytesInRes);
             // Read it in
             if (file.ReadAtCurrentPos((char*)lpIR->IconImages.get()[i].lpBits.get(), lpIDE[i].dwBytesInRes) <= 0) { return -1;}
-
             //check PNG SIG
             if (CheckPngSignature(lpIR->IconImages.get()[i].lpBits.get())) {
                 info->png_end_position = GetFileCurrentPos(file);
@@ -105,8 +90,6 @@ namespace crypto{
                 info->png_chunk_offset = lpIDE[i].dwImageOffset;
                 info->png_chunk_size = lpIDE[i].dwBytesInRes;
             }
-    
-            // Set the internal pointers appropriately
         }
         info->png_end_position = GetFileCurrentPos(file);
         return true;
@@ -165,6 +148,11 @@ namespace crypto{
             file_digest_size = total_read;
             return true;
         }
+        return false;
+    }
+
+    bool PKCS7Ico::getFileContentDigest(size_t &out_file_content_digest_size, uint8_t *out_file_content_digest){
+
         return false;
     }
 

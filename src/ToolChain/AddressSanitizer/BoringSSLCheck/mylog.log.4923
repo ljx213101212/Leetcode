@@ -1,0 +1,17 @@
+
+=================================================================
+==4923==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 28 byte(s) in 1 object(s) allocated from:
+    #0 0x7f5a4f8b7618 in operator new[](unsigned long) (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xe0618)
+    #1 0x5632b9f1fc7a in main /home/jixiang/Documents/code/Leetcode/src/ToolChain/AddressSanitizer/BoringSSLCheck/main.cc:44
+    #2 0x7f5a4ea7db96 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21b96)
+
+Direct leak of 28 byte(s) in 1 object(s) allocated from:
+    #0 0x7f5a4f8b7618 in operator new[](unsigned long) (/usr/lib/x86_64-linux-gnu/libasan.so.4+0xe0618)
+    #1 0x5632b9f1681b in crypto::PKCS7Verifier::ResetSignedData(unsigned char const*, unsigned long) /home/jixiang/Documents/code/Leetcode/src/ToolChain/AddressSanitizer/BoringSSLCheck/pkcs7_verifier.cc:69
+    #2 0x5632b9f16259 in crypto::PKCS7Verifier::PKCS7Verifier(unsigned char const*, unsigned long) /home/jixiang/Documents/code/Leetcode/src/ToolChain/AddressSanitizer/BoringSSLCheck/pkcs7_verifier.cc:13
+    #3 0x5632b9f1f8f3 in main /home/jixiang/Documents/code/Leetcode/src/ToolChain/AddressSanitizer/BoringSSLCheck/main.cc:21
+    #4 0x7f5a4ea7db96 in __libc_start_main (/lib/x86_64-linux-gnu/libc.so.6+0x21b96)
+
+SUMMARY: AddressSanitizer: 56 byte(s) leaked in 2 allocation(s).
