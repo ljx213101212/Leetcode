@@ -3,14 +3,6 @@
 
 namespace crypto{
 
-    // static const size_t kPNGHeaderSize = 8;
-    // static const long kInvalidSetFilePointer = -1;
-    // static const size_t kBufferSize = 0x1000;
-    // static const std::string kPNGSigChunkType("iTXt");
-    // static const std::string kPNGIEndChunkType("IEND");
-    // static const size_t kPNGChunkLengthSize = 4;
-    // static const size_t kPNGChunkTypeSize = 4;
-
     PKCS7Png::PKCS7Png(base::FilePath file_path){
         file_path_ = file_path;
     }
@@ -74,7 +66,7 @@ namespace crypto{
             size_t remainder = size % kBufferSize;
             if (remainder > 0)
             {
-                if (file.ReadAtCurrentPos(&data_read[0], remainder) <= 0) { return false; }
+                if (file.ReadAtCurrentPos(&data_read[0], remainder) < remainder) { return false; }
                 std::memcpy(file_digest + total_read, &data_read[0], remainder);
                 total_read += remainder;
             }

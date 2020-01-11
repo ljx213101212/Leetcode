@@ -2,7 +2,7 @@
 #define CRYPTO_PKCS7_ICO_H_
 
 #include "build/build_config.h"
-
+#include "crypto/crypto_export.h"
 #include "base/win/scoped_handle.h"
 #include "base/base_paths.h"
 #include "base/files/file.h"
@@ -11,7 +11,6 @@
 #include "base/files/scoped_file.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/path_service.h"
-#include "crypto/crypto_export.h"
 
 
 namespace crypto {
@@ -22,10 +21,13 @@ typedef struct IcoFileInfo_
     size_t file_start_position;
     size_t png_start_position;
     size_t png_end_position;
+	size_t file_end_position;
     size_t nth_image_is_png;
     size_t num_of_ico;
     size_t png_chunk_offset;
     size_t png_chunk_size;
+	size_t sig_chunk_offset;
+	size_t sig_chunk_size;
 }IcoFileInfo;
 
 typedef struct
@@ -67,19 +69,25 @@ typedef struct
 //Input scoped_fio.
 class CRYPTO_EXPORT PKCS7Ico {
 public:
-   PKCS7Ico(base::FilePath file_path);
-   ~PKCS7Ico();
-   static size_t GetFileCurrentPos(base::File& file); 
-   int64_t getFileSize();
-   base::File getFile();
-   bool CheckPngSignature(unsigned char* chunkData); 
-   int ReadIcoImageNumber();
-   bool GetIcoFileInfo(IcoFileInfo *info); 
-   bool getSignedFileDigest(size_t &file_digest_size, uint8_t *file_digest);
-   bool getFileContentDigest(size_t &out_file_content_digest_size, uint8_t *out_file_content_digest);
+	PKCS7Ico(base::FilePath file_path);
+	~PKCS7Ico();
+	static size_t GetFileCurrentPos(base::File& file); 
+	int64_t getFileSize();
+	base::File getFile();
+	bool CheckPngSignature(unsigned char* chunkData); 
+	int ReadIcoImageNumber();
+
+	bool getSignedFileDigest(size_t &file_digest_size, uint8_t *file_digest);
+	bool getFileContentDigest(EVP_MD* in_digest_algorithm, size_t &out_file_content_digest_size, uint8_t *out_file_content_digest);
 
  private:
+ 	bool GetIcoFileInfo(IcoFileInfo *info); 
+    bool UpdateSignaturePosition(unsigned char* png_chunk_data, size_t png_chunk_size, size_t png_chunk_offset, IcoFileInfo* info);
+	bool HashFileHeader(base::File* file, EVP_MD_CTX* ctx);
+	bool HashFileBody(base::File* file, EVP_MD_CTX* ctx);
+	bool HashFixedChunk(base::File* file, EVP_MD_CTX* ctx, size_t chunk_size, size_t chunk_offset);
     base::FilePath file_path_;
+	IcoFileInfo file_info_;
 
 };
 
