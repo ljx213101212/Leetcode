@@ -1,0 +1,35 @@
+// RzUtility.idl : IDL source for RzUtility
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (RzUtility.tlb) and marshalling code.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(BFE24D59-6568-4179-8AE5-D9D53869A3E3),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IElevator : IDispatch{
+    [id(2)] HRESULT LaunchProcess([in] BSTR appName, [in] BSTR args);
+};
+[
+	uuid(F24A9E29-FC07-4277-9BBE-8315A7735BF0),
+	version(1.0),
+]
+library RzUtilityLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(0EDEAF3C-D36E-4E7E-9467-900B977DC4FF)		
+	]
+	coclass Elevator
+	{
+		[default] interface IElevator;
+	};
+};
+
