@@ -11,6 +11,7 @@
 #include "base/files/scoped_file.h"
 #include "base/files/scoped_temp_dir.h"
 #include "base/path_service.h"
+#include "pkcs7_constant.h"
 
 
 namespace crypto {
@@ -78,7 +79,7 @@ public:
 	int ReadIcoImageNumber();
 
 	bool getSignedFileDigest(size_t &file_digest_size, uint8_t *file_digest);
-	bool getFileContentDigest(EVP_MD* in_digest_algorithm, size_t &out_file_content_digest_size, uint8_t *out_file_content_digest);
+	bool getFileContentDigest(const EVP_MD* in_digest_algorithm, unsigned int &out_file_content_digest_size, uint8_t *out_file_content_digest);
 
  private:
  	bool GetIcoFileInfo(IcoFileInfo *info); 

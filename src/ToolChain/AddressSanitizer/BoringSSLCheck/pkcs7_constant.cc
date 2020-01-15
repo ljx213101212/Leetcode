@@ -5,8 +5,8 @@ namespace crypto{
     const size_t kPNGHeaderSize = 8;
     const long kInvalidSetFilePointer = -1;
     const size_t kBufferSize = 0x1000;
-    const std::string kPNGSigChunkType = "iTXt";
-    const std::string kPNGIEndChunkType ="IEND";
+    const uint8_t kPNGSigChunkType[4] = {'i','T','X','t'}; //"iTXt"
+    const uint8_t kPNGIEndChunkType[4] = {'I','E','N','D'};//IEND
     const size_t kPNGChunkLengthSize = 4;
     const size_t kPNGChunkTypeSize = 4;
     const size_t kPNGChunkCRCSize = 4;

@@ -1,5 +1,4 @@
 #include "pkcs7_ico.h"
-#include "pkcs7_constant.h"
 #if defined(OS_WIN)
 #include <winsock.h>
 #elif defined(OS_POSIX) || defined(OS_FUCHSIA)
@@ -28,20 +27,20 @@ namespace crypto{
     //private
     bool PKCS7Ico::UpdateSignaturePosition(unsigned char* png_chunk_data, size_t png_chunk_size, size_t png_chunk_offset, IcoFileInfo* info){
         
-        if (NULL == png_chunk_data || png_chunk_size == 0)
-        unsigned char data_read[kPNGHeaderSize];
+        if (NULL == png_chunk_data || NULL == info) { return false; }
+        std::vector<unsigned char> data_read(kPNGHeaderSize);
         size_t png_chunk_ptr = 0;
         png_chunk_ptr += kPNGHeaderSize;
         while (png_chunk_ptr < png_chunk_size){
-            memcpy_s(data_read, kPNGHeaderSize, png_chunk_data + png_chunk_ptr, kPNGHeaderSize);
-            uint32_t png_size = ntohl(*(uint32_t*)data_read);
-            const unsigned char* tag = ((const unsigned char*)&buffer[4]);
-            if (0 == memcmp(tag, kPNGSigChunkType, PNG_TAG_SIZE)){
+            memcpy_s(data_read.data(), kPNGHeaderSize, png_chunk_data + png_chunk_ptr, kPNGHeaderSize);
+            uint32_t png_size = ntohl(*(uint32_t*)data_read.data());
+            const unsigned char* tag = ((const unsigned char*)&data_read[4]);
+            if (0 == memcmp(tag, kPNGSigChunkType, kPNGChunkTypeSize)){
                 info->sig_chunk_offset = png_chunk_offset + png_chunk_ptr;
                 info->sig_chunk_size = kPNGHeaderSize + png_size + kPNGChunkCRCSize;
                 return true;
             }
-            png_chunk_ptr += kPNGHeaderSize + size + kPNGChunkCRCSize;
+            png_chunk_ptr += kPNGHeaderSize + png_size + kPNGChunkCRCSize;
         }
         return NULL;
     }
@@ -126,7 +125,7 @@ namespace crypto{
                 info->num_of_ico = lpIR->nNumImages;
                 info->png_chunk_offset = lpIDE[i].dwImageOffset;
                 info->png_chunk_size = lpIDE[i].dwBytesInRes;
-                UpdateSignaturePosition(lpIR->IconImages[i].lpBits, info->png_chunk_size, info->png_chunk_offset, info);
+                UpdateSignaturePosition(lpIR->IconImages.get()[i].lpBits.get(), info->png_chunk_size, info->png_chunk_offset, info);
             }
     
             // Set the internal pointers appropriately
@@ -137,7 +136,6 @@ namespace crypto{
 
     bool PKCS7Ico::getSignedFileDigest(size_t &file_digest_size, uint8_t *file_digest){
 
-        if (file_info_ == NULL) { return false;}
         IcoFileInfo info = file_info_;
         size_t png_size = info.png_end_position - info.png_start_position;
         base::File file = getFile();
@@ -152,7 +150,7 @@ namespace crypto{
 
 			const unsigned int size = data_read[3] | data_read[2] << 8 | data_read[1] << 16 | data_read[0] << 24;
 			const unsigned char* tag = ((const unsigned char*)&data_read[4]);
-			if (std::memcmp(tag, kPNGSigChunkType.c_str(), kPNGChunkTypeSize) != 0)
+			if (std::memcmp(tag, kPNGSigChunkType, kPNGChunkTypeSize) != 0)
 			{
                 if (file.Seek(base::File::FROM_CURRENT, size + kPNGChunkTypeSize) == kInvalidSetFilePointer){
                     return false;
@@ -198,7 +196,6 @@ namespace crypto{
         if (file == NULL || ctx == NULL) { return false; }
      
         //Get the ICO file basic info.
-        if (file_info_ == NULL) { return false;}
         IcoFileInfo info = file_info_;
         //Start to recover the original ico header.
         //See https://wiki.fileformat.com/image/ico/
@@ -213,15 +210,14 @@ namespace crypto{
         std::vector<char> header_directory_buffer(ico_header_directory_size);
         //start from the first byte of icon file.
         size_t ico_file_ptr = 0;
-        size_t png_size_data = 0;
         size_t rest_num_of_bmp = 0;
 
         //Make sure the file ptr is from the beginning
-        if (file.Seek(base::File::FROM_BEGIN, 0) == kInvalidSetFilePointer){
+        if (file->Seek(base::File::FROM_BEGIN, 0) == kInvalidSetFilePointer){
             return false;
         }
         //Read ico header and directory chunk.
-        if (file.ReadAtCurrentPos(header_directory_buffer.data(), ico_header_directory_size) <= 0) { return false; }
+        if (file->ReadAtCurrentPos(header_directory_buffer.data(), ico_header_directory_size) <= 0) { return false; }
 
         /**
          * Update png chunk size value and pass data from ico first start byte to end of png in directory byte. 
@@ -242,8 +238,8 @@ namespace crypto{
         /**
          * Update all bmp chunks follow png chunk(one and only) in ico directory chunk.
          */ 
-        rest_num_of_bmp = info.numOfIco - info.nthImageIsPng;
-        for (int i = 0; i < rest_num_of_bmp; i++){
+        rest_num_of_bmp = info.num_of_ico - info.nth_image_is_png;
+        for (size_t i = 0; i < rest_num_of_bmp; i++){
 
             ico_file_ptr += kICODirectoryDataOffsetOffset;
             unsigned char offset_buffer[kICODirectoryDataOffsetBytes];
@@ -263,7 +259,7 @@ namespace crypto{
          * Hash the "Transformed back to original" file  (only header and directory part)
          */ 
         if (1 != EVP_DigestUpdate(ctx, header_directory_buffer.data(), ico_header_directory_size)){ return false; }
-         
+        return true;
     }
 
     //Continuing hash the file but skip the signature part (icons content)
@@ -273,14 +269,12 @@ namespace crypto{
         //Param check
         if (file == NULL || ctx == NULL) { return false; }
         //Get the ICO file basic info.
-        if (file_info_ == NULL) { return false;}
         IcoFileInfo info = file_info_;
         size_t ico_header_directory_size = kICOHeaderSize + info.num_of_ico * kICODirectoryChunkSize;
-        size_t total_body_size =  info.file_end_position - ico_header_directory_size;
         size_t before_signature_part_size = info.sig_chunk_offset - ico_header_directory_size;
         size_t before_signature_part_offset = ico_header_directory_size;
-        size_t after_singature_part_offset = info.sig_chunk_offset + info.sig_chunk_size; 
-        size_t after_signature_part_size = info.file_end_position - after_singature_part_offset;
+        size_t after_signature_part_offset = info.sig_chunk_offset + info.sig_chunk_size; 
+        size_t after_signature_part_size = info.file_end_position - after_signature_part_offset;
         //1. Hash before signature part chunk
         HashFixedChunk(file, ctx, before_signature_part_size, before_signature_part_offset);
         //2. Hash after signature part chunk
@@ -291,42 +285,44 @@ namespace crypto{
 
     bool PKCS7Ico::HashFixedChunk(base::File* file, EVP_MD_CTX* ctx, size_t chunk_size, size_t chunk_offset){
         
-        //Param check
+      //Param check
         if (file == NULL || ctx == NULL) { return false; }
-        unsigned char data_read[kBufferSize];
+        char data_read[kBufferSize];
         size_t remainder_size = chunk_size % kBufferSize;
         //make sure the file ptr is from the first byte of icon content.
-        if (file.Seek(base::File::FROM_BEGIN, chunk_offset) == kInvalidSetFilePointer){
+        if (file->Seek(base::File::FROM_BEGIN, chunk_offset) == kInvalidSetFilePointer){
             return false;
         }
-        for (size_t i = 0; i < total_body_size / kBufferSize; i++) {
-            if (file.ReadAtCurrentPos(data_read, kBufferSize) <= 0) { return false; }
+        for (size_t i = 0; i < chunk_size / kBufferSize; i++) {
+            if (file->ReadAtCurrentPos(&data_read[0], kBufferSize) <= 0) { return false; }
             //Hash buffer
-            if (1 != EVP_DigestUpdate(ctx, data_read, kBufferSize)){ return false; }
+            if (1 != EVP_DigestUpdate(ctx, &data_read[0], kBufferSize)){ return false; }
         }
-        if (file.ReadAtCurrentPos(data_read, remainder_size) < remainder_size) { return false; }
+        if (remainder_size > 0){
+            if (file->ReadAtCurrentPos(&data_read[0], remainder_size) <= 0) { return false; }
+        }
         //Hash remainder
-        if (1 != EVP_DigestUpdate(ctx, data_read, remainder_size)){ return false; }
+        if (1 != EVP_DigestUpdate(ctx, &data_read[0], remainder_size)){ return false; }
         return true;
     }
 
     //Note: See https://wiki.fileformat.com/image/ico/#header
     //All values in ICO/CUR files are represented in little-endian byte order.
-    bool PKCS7Ico::getFileContentDigest(EVP_MD* in_digest_algorithm, size_t &out_file_content_digest_size, uint8_t *out_file_content_digest){
+   bool PKCS7Ico::getFileContentDigest(const EVP_MD* in_digest_algorithm, unsigned int &out_file_content_digest_size, uint8_t *out_file_content_digest){
         
         //Param check
-        if (out_file_content_digest_size == NULL || out_file_content_digest == NULL) { return false; }
+        if (out_file_content_digest == NULL) { return false; }
         bssl::ScopedEVP_MD_CTX mdctx;
         base::File file = getFile();
         //1.Init 
         if (1 != EVP_DigestInit_ex(mdctx.get(), in_digest_algorithm, NULL)){ return false; }
         //2.Update
         //Hash header
-        HashFileHeader(file, ctx);
+        HashFileHeader(&file, mdctx.get());
         //Hash content
-        HashFileBody(file, ctx);
+        HashFileBody(&file, mdctx.get());
         //3.Final
-        if (1 != EVP_DigestFinal_ex(mdctx.get(), out_file_content_digest, out_file_content_digest_size)){ return false; }
+        if (1 != EVP_DigestFinal_ex(mdctx.get(), out_file_content_digest, &out_file_content_digest_size)){ return false; }
         return true;        
     }
 

@@ -1,19 +1,19 @@
-// Copyright (c) 2011 The Chromium Authors. All rights reserved.	
-	// Use of this source code is governed by a BSD-style license that can be	
-	// found in the LICENSE file.
-#include "pkcs7_constant.h"	
-#include "pkcs7_verifier.h"	
-#include <fstream>	
-#include <string>	
-#include <bytestring/internal.h>
-		
-namespace crypto{	
-            
+// Copyright (c) 2011 The Chromium Authors. All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+#include "crypto/pkcs7_verifier.h"
+#include "third_party/boringssl/src/crypto/bytestring/internal.h"
+#include "third_party/boringssl/src/crypto/internal.h"
+
+namespace crypto{
+
+
 PKCS7Verifier::PKCS7Verifier(const uint8_t* data , size_t len){		
     ResetSignedData(data, len);	
-}	
-PKCS7Verifier::~PKCS7Verifier() = default;   	
-    
+}
+
+PKCS7Verifier::~PKCS7Verifier() = default;   
+
 //static
 //See boringssl/src/crypto/pkcs7/pkcs7.c
 int PKCS7Verifier::PKCS7ParseHeader(uint8_t** der_bytes, CBS* out_cbs, CBS* in_cbs){	
@@ -63,7 +63,6 @@ const EVP_MD *PKCS7Verifier::cbs_to_md(const CBS *cbs)
     }
     return NULL;
 }
-
 //Reset signed data.    
 void PKCS7Verifier::ResetSignedData(const unsigned char* in_data, size_t in_len){	
     signed_data_.assign(in_data, in_data + in_len);
@@ -75,7 +74,7 @@ CBS PKCS7Verifier::GetSignedData(){
     CBS signed_data;	
     CBS_init(&signed_data, signed_data_.data(), signed_data_.size());	
     return signed_data;	
-}
+}	
 
 bool PKCS7Verifier::PKCS7GetSpcIndirectDataContentDigestValue(CBS* in_signed_data, CBS* out_digest){
 
@@ -128,7 +127,6 @@ bool PKCS7Verifier::PKCS7FileContentDigestVerification(CBS* in_signed_data, CBS*
     //Both equal then OK
     return is_length_ok && is_content_ok;
 }
-
 bool PKCS7Verifier::PKCS7GetDigestAlgorithm(CBS* in_signed_data, CBS* out_cbs) {
      std::unique_ptr<uint8_t*> der_bytes = std::make_unique<uint8_t*>();	
     CBS in, content_info, content_type, wrapped_signed_data, signed_data;	
@@ -204,7 +202,7 @@ bool PKCS7Verifier::PKCS7GetMessageDigestValue(CBS* in_signed_data, std::vector<
     return true;	
 }	
     
-    
+
 bool PKCS7Verifier::PKCS7GetContentInfo(CBS* in_signed_data, std::vector<uint8_t>& out_content_info){	
 
     std::unique_ptr<uint8_t*> der_bytes = std::make_unique<uint8_t*>();	
@@ -258,7 +256,7 @@ bool PKCS7Verifier::PKCS7EVPMessageDigest(const EVP_MD* in_digest_algorithm, con
 //Compare message_digest from signed_data and Digested Content Info (size compare & memcmp)
 //See https://tools.ietf.org/html/rfc2315#section-9.3 
 /*
-   Specifically, the initial PKCS7FileContentDigestVerificationinput is the contents octets of the DER
+   Specifically, the initial input is the contents octets of the DER
    encoding of the content field of the ContentInfo value to which the
    signing process is applied. Only the contents octets of the DER
    encoding of that field are digested, not the identifier octets or the
@@ -288,34 +286,57 @@ bool PKCS7Verifier::PKCS7MessageDigestValidation(CBS* in_signed_data , const EVP
     return (bool)is_md_Ok;	
 }	
 
-//see https://tools.ietf.org/html/rfc5280 4.1 Basic Certificate Fields	
-//subjectPublicKeyInfo 	
-bool PKCS7Verifier::PKCS7GetPublicKeyInfo(CBS* in_signed_data, std::vector<uint8_t>& out_public_key_info){	
-std::unique_ptr<uint8_t*> der_bytes = std::make_unique<uint8_t*>();	
-CBS signed_data, certificates, public_key_info, toplevel;	
-    if (!PKCS7ParseHeader(der_bytes.get(), &signed_data, in_signed_data) ||	
-    !CBS_get_optional_asn1(	
-        &signed_data, &certificates, NULL,	
-        CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0)) {	
-    return false;	
-    }	
-    if (!CBS_get_asn1(&certificates, &toplevel, CBS_ASN1_SEQUENCE)) { return false; }	
-    if (!CBS_get_asn1(&toplevel, &public_key_info, CBS_ASN1_SEQUENCE)) { return false; }	
-    if (!CBS_get_optional_asn1(	
-    &public_key_info, NULL, NULL,	
-    CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 0)) { return false; }	
-    if (!CBS_get_asn1(&public_key_info, NULL, CBS_ASN1_INTEGER)) { return false; }	
-    if (!CBS_get_asn1(&public_key_info, NULL, CBS_ASN1_SEQUENCE)) { return false; }	
-    if (!CBS_get_asn1(&public_key_info, NULL, CBS_ASN1_SEQUENCE)) { return false; }	
-    if (!CBS_get_asn1(&public_key_info, NULL, CBS_ASN1_SEQUENCE)) { return false; }	
-    if (!CBS_get_asn1(&public_key_info, NULL, CBS_ASN1_SEQUENCE)) { return false; }	
 
-    uint8_t* tmp = (uint8_t*)CBS_data(&public_key_info);	
-    size_t out_size =  CBS_len(&public_key_info);	
-    out_public_key_info.resize(out_size);	
-    out_public_key_info.assign(tmp,(tmp + out_size));	
-    return true;	
-}	
+bool PKCS7Verifier::PKCS7GetSignatureAlgorithm(CBS* in_public_key_info, const EVP_MD* in_signature_algorithm, SignatureVerifier::SignatureAlgorithm& out_algorithm){
+    //param check
+    if (in_public_key_info == NULL) { return false; }
+    bssl::UniquePtr<EVP_PKEY> public_key(EVP_parse_public_key(in_public_key_info));
+    int public_key_type = EVP_PKEY_id(public_key.get());
+    int md_type = EVP_MD_type(in_signature_algorithm);
+    
+    if (public_key_type == EVP_PKEY_RSA
+       && md_type == NID_sha256){
+        out_algorithm = SignatureVerifier::SignatureAlgorithm::RSA_PKCS1_SHA256;
+    }else if (public_key_type == EVP_PKEY_RSA
+      && md_type == NID_sha1) {
+        out_algorithm = SignatureVerifier::SignatureAlgorithm::RSA_PKCS1_SHA1;
+    }else if (public_key_type == EVP_PKEY_EC
+      && md_type == NID_sha256){
+        out_algorithm = SignatureVerifier::SignatureAlgorithm::ECDSA_SHA256;
+    }else{
+        //NOT SUPPORTED signature algorithm
+        return false;
+    }
+    return true;
+}
+ //see https://tools.ietf.org/html/rfc5280 4.1 Basic Certificate Fields
+ //subjectPublicKeyInfo 
+ bool PKCS7Verifier::PKCS7GetPublicKeyInfo(CBS* in_signed_data, std::vector<uint8_t>& out_public_key_info){
+    std::unique_ptr<uint8_t*> der_bytes = std::make_unique<uint8_t*>();
+    CBS signed_data, certificates, public_key_info, toplevel;
+	  if (!PKCS7ParseHeader(der_bytes.get(), &signed_data, in_signed_data) ||
+		!CBS_get_optional_asn1(
+			&signed_data, &certificates, NULL,
+			CBS_ASN1_CONTEXT_SPECIFIC | CBS_ASN1_CONSTRUCTED | 0)) {
+	    return false;
+	  }
+	  if (!CBS_get_asn1(&certificates, &toplevel, CBS_ASN1_SEQUENCE)) { return false; }
+	  if (!CBS_get_asn1(&toplevel, &public_key_info, CBS_ASN1_SEQUENCE)) { return false; }
+	  if (!CBS_get_optional_asn1(
+		&public_key_info, NULL, NULL,
+		CBS_ASN1_CONSTRUCTED | CBS_ASN1_CONTEXT_SPECIFIC | 0)) { return false; }
+	  if (!CBS_get_asn1(&public_key_info, NULL, CBS_ASN1_INTEGER)) { return false; }
+	  if (!CBS_get_asn1(&public_key_info, NULL, CBS_ASN1_SEQUENCE)) { return false; }
+	  if (!CBS_get_asn1(&public_key_info, NULL, CBS_ASN1_SEQUENCE)) { return false; }
+	  if (!CBS_get_asn1(&public_key_info, NULL, CBS_ASN1_SEQUENCE)) { return false; }
+	  if (!CBS_get_asn1(&public_key_info, NULL, CBS_ASN1_SEQUENCE)) { return false; }
+
+    uint8_t* tmp = (uint8_t*)CBS_data(&public_key_info);
+    size_t out_size =  CBS_len(&public_key_info);
+    out_public_key_info.resize(out_size);
+    out_public_key_info.assign(tmp,(tmp + out_size));
+	  return true;
+  }
 
 
 //See https://tools.ietf.org/html/rfc5280 4.1 Basic Certificate Fields

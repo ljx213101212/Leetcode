@@ -16,8 +16,8 @@ namespace crypto{
     extern const size_t kPNGHeaderSize;
     extern const long kInvalidSetFilePointer;
     extern const size_t kBufferSize;
-    extern const std::string kPNGSigChunkType;
-    extern const std::string kPNGIEndChunkType;
+    extern const uint8_t kPNGSigChunkType[4];
+    extern const uint8_t kPNGIEndChunkType[4];
     extern const size_t kPNGChunkLengthSize;
     extern const size_t kPNGChunkTypeSize;
     extern const size_t kPNGChunkCRCSize;
