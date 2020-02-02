@@ -1,3 +1,11 @@
+## Table of Contents
+- [Reading materials](#reading-materials)
+
+
+## Reading Materials
+
+[Comprehensive Data Structure and Algorithm Study Guide PDF Format](docs/CI_DSA_study_guide.pdf)
+
 # Categories
 * Dynamic Programing
 1. 顺序区间
