@@ -1,3 +1,7 @@
 main.out.dSYM
 main.out
 main.exe
+*.out
+**/.vs
+**/Debug
+

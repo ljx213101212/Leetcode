@@ -1,0 +1,7 @@
+﻿  Checking for required files
+  dlldata.c
+  RzUtility_i.c
+  RzUtility_p.c
+  Generating Code...
+     Creating library D:\SourceCodeTest\Coms\RzUtility\Debug\RzUtilityApi.lib and object D:\SourceCodeTest\Coms\RzUtility\Debug\RzUtilityApi.exp
+  RzUtilityPS.vcxproj -> D:\SourceCodeTest\Coms\RzUtility\Debug\RzUtilityApi.dll

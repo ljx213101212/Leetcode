@@ -1,0 +1,27 @@
+HKCR
+{
+	RzUtility.Elevator.1 = s 'Elevator Class'
+	{
+		CLSID = s '{0EDEAF3C-D36E-4E7E-9467-900B977DC4FF}'
+	}
+	RzUtility.Elevator = s 'Elevator Class'
+	{
+		CLSID = s '{0EDEAF3C-D36E-4E7E-9467-900B977DC4FF}'
+		CurVer = s 'RzUtility.Elevator.1'
+	}
+
+	NoRemove CLSID
+	{
+		ForceRemove {0EDEAF3C-D36E-4E7E-9467-900B977DC4FF} = s 'Elevator Class'
+		{
+			ProgID = s 'RzUtillity.Elevator.1'
+			VersionIndependentProgID = s 'RzUtility.Elevator'
+			ForceRemove Programmable
+			LocalServer32 = s '%MODULE%'
+			val AppID = s '%APPID%'
+
+			TypeLib = s '{F24A9E29-FC07-4277-9BBE-8315A7735BF0}'
+			Version = s '1.0'
+		}
+	}
+}
