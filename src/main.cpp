@@ -7,7 +7,7 @@
 // #include "MyLab/pointers/DynamicArray.h"
 // #include "Tree/5264.h"
 // #include "String/1268.h"
-#include "Array/253.h"
+#include "Array/1213.h"
 
 int main(){
     
@@ -81,8 +81,9 @@ int main(){
     // int output = sol.oddCells(48,37,input);
 
     Solution sol;
-    vector<vector<int>> intervals = { {15,20}, {0,30},{5,10}};
-    // vector<vector<int>> intervals = {{7,10},{2,4}};
-    //vector<vector<int>> intervals = {{2,7},{0,10},{3,8}};
-    int rooms = sol.minMeetingRooms(intervals);
+     vector <int> a1 = {1,2,3,4,5};
+     vector<int> a2 = {1,2,5,7,9};
+     vector<int> a3 = {1,3,4,5,8};
+
+     vector<int> output = sol.arraysIntersection(a1,a2,a3);
 }
