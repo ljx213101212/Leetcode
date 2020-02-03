@@ -37,6 +37,15 @@
             "problemMatcher": [
                 "$gcc"
             ]
+        },
+        {
+            "label": "linux build",
+            "type": "shell",
+            "command": "/home/jixiang/Documents/code/chromium/src/third_party/llvm-build/Release+Asserts/bin/clang++ -O0 -g -fsanitize=address -fno-omit-frame-pointer src/main.cpp -o main.out",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
         }
     ],
     "version": "2.0.0"
