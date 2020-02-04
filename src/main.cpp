@@ -20,4 +20,5 @@ int main()
     my_util::SampleOfUniquePtrDeleter sample = my_util::SampleOfUniquePtrDeleter();
     sample.my_test();
     return 0;
+
 }
