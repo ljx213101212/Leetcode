@@ -1,6 +1,6 @@
 #include <iostream>
 using namespace std;
-
+https://stackoverflow.com/questions/120876/what-are-the-rules-for-calling-the-superclass-constructor
 //https://stackoverflow.com/questions/53809865/undefined-reference-error-in-overriding-virtual-functions-in-c/53809941#53809941
 
 //Whole idea

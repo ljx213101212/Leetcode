@@ -1,6 +1,9 @@
 ## Table of Contents
 - [Reading materials](#reading-materials)
 
+## Pending to understand
+https://stackoverflow.com/questions/120876/what-are-the-rules-for-calling-the-superclass-constructor
+
 
 ## Reading Materials
 
