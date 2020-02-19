@@ -1,5 +1,6 @@
 ## Table of Contents
 - [Reading materials](#reading-materials)
+- [Compile & build](#compile-&-build)
 
 ## Pending to understand
 https://stackoverflow.com/questions/120876/what-are-the-rules-for-calling-the-superclass-constructor
@@ -8,6 +9,9 @@ https://stackoverflow.com/questions/120876/what-are-the-rules-for-calling-the-su
 ## Reading Materials
 
 [Comprehensive Data Structure and Algorithm Study Guide PDF Format](docs/CI_DSA_study_guide.pdf)
+
+## Compile & Build
+https://thoughtbot.com/blog/the-magic-behind-configure-make-make-install
 
 # Categories
 * Dynamic Programing
