@@ -58,6 +58,17 @@
                     }
                 ]
              }
-        }
+        },
+        {
+            "name": "(msvc) Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/out.exe",
+            "args": [],
+            "stopAtEntry": true,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "externalConsole": false
+          }
     ]
 }

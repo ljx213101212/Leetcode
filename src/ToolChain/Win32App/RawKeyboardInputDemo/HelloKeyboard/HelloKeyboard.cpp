@@ -171,9 +171,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		// Prepare string buffer for the device name
 		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_DEVICENAME, NULL, &bufferSize);
 		WCHAR* stringBuffer = new WCHAR[bufferSize];
-
 		// Load the device name into the buffer
 		GetRawInputDeviceInfo(raw->header.hDevice, RIDI_DEVICENAME, stringBuffer, &bufferSize);
+		OutputDebugString(stringBuffer);
 		delete[] stringBuffer;
 		delete[] dataBuffer;
 		return 0;

@@ -25,7 +25,7 @@
             "command": "g++",
             "args": [
                 "-g",
-                "src/Stack/1190.cc",
+                "src/ToolChain/Utility/bit_operation/1190.cc",
                 "-o",
                 "main",
                 "src/main.cpp"
@@ -37,6 +37,29 @@
             "problemMatcher": [
                 "$gcc"
             ]
+        },
+        {
+            "label": "msvc build",
+            "type": "shell",
+            //cd path_to_leetcode -> code .
+            //C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.23.28105/bin/Hostx64/x64/
+            "command": "cl.exe",
+            "args": [
+                "Ws2_32.lib",
+                "/EHsc",
+                "/Zi",
+                "/Fe:",
+                "out.exe",
+                "src/main.cpp"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "always"
+            },
+            "problemMatcher": "$msCompile"
         },
         {
             "label": "linux build",

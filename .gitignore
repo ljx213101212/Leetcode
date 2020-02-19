@@ -1,6 +1,9 @@
-main.out.dSYM
-main.out
-main.exe
+**.out.dSYM
+**.out
+**.exe
+**.pdb
+**.ilk
+**.obj
 **/*.out
 **/.vs
 **/Debug

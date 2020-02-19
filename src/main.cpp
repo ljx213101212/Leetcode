@@ -10,15 +10,16 @@
 //#include "Array/1213.h"
 
 //#include "ToolChain/Utility/file/file_info.h"
-#include "ToolChain/Utility/smart_pointer/unique_pointer_deleter.h"
-
+//#include "ToolChain/Utility/smart_pointer/unique_pointer_deleter.h"
+#include "ToolChain/Utility/bit_operation/Endianess.h"
 
 int main()
 {
     cout<<"Hello World";
-    uint8_t* der_bytes = NULL;
-    my_util::SampleOfUniquePtrDeleter sample = my_util::SampleOfUniquePtrDeleter();
-    sample.my_test();
+    my_util::SampleOfEndianess test_obj;
+    cout << test_obj.isLittleEndian() << endl;
+    test_obj.charToUINTEndianTest();
+    test_obj.uIntToCharEndianTest();
     return 0;
 
 }
