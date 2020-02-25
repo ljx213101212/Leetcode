@@ -13,6 +13,13 @@ https://stackoverflow.com/questions/120876/what-are-the-rules-for-calling-the-su
 ## Compile & Build
 https://thoughtbot.com/blog/the-magic-behind-configure-make-make-install
 
+**To build with MSVC**
+```txt
+1. Code VS2019 Native developer x64 prompt
+2. `cd path_to_leetcode`
+3. `code .`
+```
+
 # Categories
 * Dynamic Programing
 1. 顺序区间

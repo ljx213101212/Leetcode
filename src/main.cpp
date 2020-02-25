@@ -11,15 +11,18 @@
 
 //#include "ToolChain/Utility/file/file_info.h"
 //#include "ToolChain/Utility/smart_pointer/unique_pointer_deleter.h"
-#include "ToolChain/Utility/bit_operation/Endianess.h"
+//#include "ToolChain/Utility/bit_operation/Endianess.h"
+#include "ToolChain/Utility/template/rvalue_reference.h"
 
 int main()
 {
     cout<<"Hello World";
-    my_util::SampleOfEndianess test_obj;
-    cout << test_obj.isLittleEndian() << endl;
-    test_obj.charToUINTEndianTest();
-    test_obj.uIntToCharEndianTest();
+    // my_util::SampleOfEndianess test_obj;
+    // cout << test_obj.isLittleEndian() << endl;
+    // test_obj.charToUINTEndianTest();
+    // test_obj.uIntToCharEndianTest();
+    my_util::SampleOfRvalueReference test_obj;
+    test_obj.myTestMain();
     return 0;
 
 }
