@@ -4,6 +4,8 @@
 #include <memory>
 #include <functional>
 #include <stdio.h>
+#include <thread>
+#include <chrono>
 #ifdef _WIN32
 #include <winsock.h>
 #else
