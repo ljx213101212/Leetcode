@@ -199,7 +199,7 @@ int numWays(int n, int k) {
     dp[1] = k;
     dp[2] = k*k;
     //dp loop
-    for (int i = 2 ; i <= n; i++){
+    for (int i = 3 ; i <= n; i++){
         //The rationale of this line came from 6 steps above.
         dp[i] = (k - 1) * (dp[i-2] + dp[i -1]);
     }
