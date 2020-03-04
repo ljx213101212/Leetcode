@@ -6,6 +6,7 @@ namespace my_util{
  * https://stackoverflow.com/questions/5481539/what-does-t-double-ampersand-mean-in-c11
  * https://stackoverflow.com/questions/3582001/advantages-of-using-forward/3582313#3582313
  * http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2002/n1385.htm
+ * http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2004/n1690.html
  */ 
 class SampleOfRvalueReference{
    
