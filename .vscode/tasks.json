@@ -50,6 +50,7 @@
                 "/EHsc",
                 "/Zi",
                 "/Fe:",
+                "src/ToolChain/Utility/file/file_info.cc",
                 "out.exe",
                 "src/main.cpp"
             ],
