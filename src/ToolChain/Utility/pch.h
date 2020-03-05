@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <thread>
 #include <chrono>
+#include <fstream>
 #ifdef _WIN32
 #include <winsock.h>
 #else
