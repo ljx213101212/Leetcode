@@ -7,6 +7,7 @@
 #include <thread>
 #include <chrono>
 #include <fstream>
+#include <assert.h> 
 #ifdef _WIN32
 #include <winsock.h>
 #else
