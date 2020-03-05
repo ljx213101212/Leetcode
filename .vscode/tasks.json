@@ -50,8 +50,8 @@
                 "/EHsc",
                 "/Zi",
                 "/Fe:",
-                "src/ToolChain/Utility/file/file_info.cc",
                 "out.exe",
+                "src/ToolChain/Utility/file/file_info.cpp",
                 "src/main.cpp"
             ],
             "group": {

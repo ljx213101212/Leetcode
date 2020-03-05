@@ -50,29 +50,7 @@ namespace my_util{
             return file_ext;
         }
 
-        static bool createTempFileAndReadWithFlagDeleteOnClose()
-        {
-            //Flags::FLAG_CREATE_ALWAYS | Flags::FLAG_READ |
-            //Flags::FLAG_WRITE |
-            //Flags::FLAG_SHARE_DELETE
-            //Flags::FLAG_TEMPORARY | Flags::FLAG_HIDDEN| Flags::FLAG_DELETE_ON_CLOSE
-            //FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE
-
-            // HANDLE WINHandle_1 = CreateFile(TEXT("C:\\Work\\sourceCodeTest\\Leetcode\\org.png"), (DELETE | GENERIC_WRITE | GENERIC_READ), (FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE), 0, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, 0);
-            // bool isOK = true;
-
-            HANDLE WINHandle_1 = CreateFile(TEXT("C:\\Work\\sourceCodeTest\\Leetcode\\org.png"), (GENERIC_WRITE | GENERIC_READ), (FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE), 0, CREATE_ALWAYS, FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, 0);
-            bool isOK = true;
-
-            //Read
-            //Flags::FLAG_OPEN | Flags::FLAG_READ
-            HANDLE WINHandle_2 = CreateFile(TEXT("C:\\Work\\sourceCodeTest\\Leetcode\\org.png"), (GENERIC_READ), (FILE_SHARE_READ | FILE_SHARE_WRITE ), 0,  OPEN_EXISTING, 0, 0);
-            //assert(WINHandle_1 == WINHandle_2);
-
-            CloseHandle(WINHandle_1);
-            CloseHandle(WINHandle_2);
-            return isOK;
-        }
+          bool createTempFileAndReadWithFlagDeleteOnClose();
     };
     
 
