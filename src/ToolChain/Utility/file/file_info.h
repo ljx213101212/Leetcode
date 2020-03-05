@@ -58,7 +58,7 @@ namespace my_util{
             //Flags::FLAG_TEMPORARY | Flags::FLAG_HIDDEN| Flags::FLAG_DELETE_ON_CLOSE
             //FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE
             HANDLE WINHandle = CreateFile(TEXT("D:\\SourceCodeTest\\Leetcode\\org.png"),  (GENERIC_WRITE | GENERIC_READ), (FILE_SHARE_READ | FILE_SHARE_WRITE |
-                    FILE_SHARE_DELETE), 0, CREATE_ALWAYS,  FILE_ATTRIBUTE_NORMAL, 0);
+                    FILE_SHARE_DELETE), 0, CREATE_ALWAYS,  FILE_ATTRIBUTE_TEMPORARY | FILE_FLAG_DELETE_ON_CLOSE, 0);
                     bool isOK = true;
                     return isOK;
         }
