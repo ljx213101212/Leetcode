@@ -12,7 +12,7 @@
 #include "ToolChain/Utility/file/file_info.h"
 //#include "ToolChain/Utility/smart_pointer/unique_pointer_deleter.h"
 //#include "ToolChain/Utility/bit_operation/Endianess.h"
-//#include "ToolChain/Utility/template/rvalue_reference.h"
+#include "ToolChain/Utility/template/rvalue_reference.h"
 // #include "ToolChain/Utility/thread/multithread_debugging.h"
 
 int main()
@@ -24,8 +24,11 @@ int main()
     // test_obj.uIntToCharEndianTest();
     // my_util::SampleOfMultithreadDebugging test_obj;
     // test_obj.testMain();
-    my_util::FileInfo test_obj;
-    test_obj.createTempFileAndReadWithFlagDeleteOnClose();
+    // my_util::FileInfo test_obj;
+    // test_obj.createTempFileAndReadWithFlagDeleteOnClose();
+
+    my_util::SampleOfRvalueReference test_obj;
+    test_obj.myTestMain();
     return 0;
 
 }

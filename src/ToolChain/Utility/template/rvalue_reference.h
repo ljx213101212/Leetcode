@@ -7,6 +7,11 @@ namespace my_util{
  * https://stackoverflow.com/questions/3582001/advantages-of-using-forward/3582313#3582313
  * http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2002/n1385.htm
  * http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2004/n1690.html
+ * https://www.modernescpp.com/index.php/perfect-forwarding
+ *
+ * binding-rvalue-to-const-lvalue-reference
+ * https://stackoverflow.com/questions/40873500/binding-rvalue-to-const-lvalue-reference
+ * http://www.open-std.org/jtc1/sc22/wg21/docs/papers/1993/N0345.pdf
  */ 
 class SampleOfRvalueReference{
    

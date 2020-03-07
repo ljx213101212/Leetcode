@@ -164,6 +164,8 @@ static void initMinhook()
                     return isOK;
 
             CloseHandle(WINHandle);
+
+            
         }
 
 } // namespace my_util
