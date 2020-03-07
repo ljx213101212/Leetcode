@@ -9,11 +9,11 @@
 // #include "String/1268.h"
 //#include "Array/1213.h"
 
-//#include "ToolChain/Utility/file/file_info.h"
+#include "ToolChain/Utility/file/file_info.h"
 //#include "ToolChain/Utility/smart_pointer/unique_pointer_deleter.h"
 //#include "ToolChain/Utility/bit_operation/Endianess.h"
 //#include "ToolChain/Utility/template/rvalue_reference.h"
-#include "ToolChain/Utility/thread/multithread_debugging.h"
+// #include "ToolChain/Utility/thread/multithread_debugging.h"
 
 int main()
 {
@@ -22,8 +22,10 @@ int main()
     // cout << test_obj.isLittleEndian() << endl;
     // test_obj.charToUINTEndianTest();
     // test_obj.uIntToCharEndianTest();
-    my_util::SampleOfMultithreadDebugging test_obj;
-    test_obj.testMain();
+    // my_util::SampleOfMultithreadDebugging test_obj;
+    // test_obj.testMain();
+    my_util::FileInfo test_obj;
+    test_obj.createTempFileAndReadWithFlagDeleteOnClose();
     return 0;
 
 }

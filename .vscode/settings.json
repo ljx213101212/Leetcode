@@ -68,8 +68,22 @@
         "fstream": "cpp",
         "cinttypes": "cpp",
         "unordered_set": "cpp",
-        "thread": "cpp"
+        "thread": "cpp",
+        "concepts": "cpp",
+        "list": "cpp",
+        "xutility": "cpp",
+        "xfacet": "cpp",
+        "xhash": "cpp",
+        "xiosbase": "cpp",
+        "xlocale": "cpp",
+        "xlocinfo": "cpp",
+        "xlocnum": "cpp",
+        "xmemory": "cpp",
+        "xstddef": "cpp",
+        "xstring": "cpp",
+        "xtr1common": "cpp"
     },
     "C_Cpp.default.cppStandard": "c++11",
-    "clang-format.executable":"C:\\Program Files\\LLVM\\bin\\clang-format.exe"
+	"clang-format.executable":"C:\\Program Files\\LLVM\\bin\\clang-format.exe",
+    "C_Cpp.dimInactiveRegions": false
 }

@@ -41,6 +41,7 @@
         {
             "label": "msvc build",
             "type": "shell",
+            //open native vs2019 developer prompt.
             //cd path_to_leetcode -> code .
             //C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.23.28105/bin/Hostx64/x64/
             "command": "cl.exe",
@@ -50,6 +51,7 @@
                 "/Zi",
                 "/Fe:",
                 "out.exe",
+                "src/ToolChain/Utility/file/file_info.cpp",
                 "src/main.cpp"
             ],
             "group": {
