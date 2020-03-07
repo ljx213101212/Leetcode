@@ -8,4 +8,6 @@
 #include <algorithm>
 #include <set>
 #include <unordered_set>
+#include <ctype.h>
+#include <stdlib.h>
 using namespace std;
