@@ -46,6 +46,7 @@
             //C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/VC/Tools/MSVC/14.23.28105/bin/Hostx64/x64/
             "command": "cl.exe",
             "args": [
+                "Setupapi.lib",
                 "Ws2_32.lib",
                 "/EHsc",
                 "/Zi",

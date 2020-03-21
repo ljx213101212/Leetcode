@@ -9,11 +9,12 @@
 // #include "String/1268.h"
 //#include "Array/1213.h"
 
-#include "ToolChain/Utility/file/file_info.h"
+//#include "ToolChain/Utility/file/file_info.h"
 //#include "ToolChain/Utility/smart_pointer/unique_pointer_deleter.h"
 //#include "ToolChain/Utility/bit_operation/Endianess.h"
-#include "ToolChain/Utility/template/rvalue_reference.h"
+//#include "ToolChain/Utility/template/rvalue_reference.h"
 // #include "ToolChain/Utility/thread/multithread_debugging.h"
+#include "ToolChain/Utility/win32_api/registry_crud.h"
 
 int main()
 {
@@ -27,8 +28,12 @@ int main()
     // my_util::FileInfo test_obj;
     // test_obj.createTempFileAndReadWithFlagDeleteOnClose();
 
-    my_util::SampleOfRvalueReference test_obj;
-    test_obj.myTestMain();
+    // my_util::SampleOfRvalueReference test_obj;
+    // test_obj.myTestMain();
+    my_util::SampleOfRegistry test_obj;
+    //
+    test_obj.EnumHardwareId(L"{4D36E96B-E325-11CE-BFC1-08002BE10318}");
+
     return 0;
 
 }
