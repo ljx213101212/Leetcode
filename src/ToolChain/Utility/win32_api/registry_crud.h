@@ -25,6 +25,9 @@ class SampleOfRegistry
 public:
     //@param classGuid -> {4d36e96f-e325-11ce-bfc1-08002be10318} <- Mouse
     //https://docs.microsoft.com/en-us/windows-hardware/drivers/install/system-defined-device-setup-classes-available-to-vendors
+    
+    //SP_DEVINFO_DATA
+    //https://docs.microsoft.com/en-us/windows-hardware/drivers/install/device-information-sets
     std::vector<wstring> EnumHardwareId(BSTR classGuid)
     {
         std::vector<wstring> ret;
@@ -49,7 +52,7 @@ public:
             if (!SetupDiGetDeviceInfoListDetail(devInfo, &devInfoListDetail))
                 break;
 
-            if (CM_Get_Device_ID_ExW(devInfoData.DevInst, (PWSTR)devID, MAX_DEVICE_ID_LEN, 0, devInfoListDetail.RemoteMachineHandle) != CR_SUCCESS)
+            if (CM_Get_Device_IDW(devInfoData.DevInst, (PWSTR)devID, MAX_DEVICE_ID_LEN, 0) != CR_SUCCESS)
                 break;
 
             wstring currentDevicePath = devID;
