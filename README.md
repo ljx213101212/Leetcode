@@ -1,6 +1,7 @@
 ## Table of Contents
 - [Reading materials](#reading-materials)
 - [Compile & build](#compile-&-build)
+- [Tools](#Tools)
 
 ## Pending to understand
 https://stackoverflow.com/questions/120876/what-are-the-rules-for-calling-the-superclass-constructor
@@ -74,3 +75,7 @@ I disable unicode support on Windows codepage settings, now it works.
 clang++ -g -std=c++11 922/922.cpp main.cpp -o main.out
 ### Win 64 （open VS code in admin mode)
 g++ -g -I include 922/922.cpp -o main main.cpp
+
+## Tools  
+### Efficient weapon Forget about arrow keys
+https://stackoverflow.com/questions/45509922/is-there-a-faster-alternative-to-using-the-arrow-keys
