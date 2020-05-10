@@ -53,6 +53,7 @@
                 "/Fe:",
                 "out.exe",
                 "src/ToolChain/Utility/file/file_info.cpp",
+                "src/ToolChain/Utility/file/file_write.cpp",
                 "src/main.cpp"
             ],
             "group": {

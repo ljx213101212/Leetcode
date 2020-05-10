@@ -14,7 +14,8 @@
 //#include "ToolChain/Utility/bit_operation/Endianess.h"
 //#include "ToolChain/Utility/template/rvalue_reference.h"
 // #include "ToolChain/Utility/thread/multithread_debugging.h"
-#include "ToolChain/Utility/win32_api/registry_crud.h"
+// #include "ToolChain/Utility/win32_api/registry_crud.h"
+#include "ToolChain/Utility/file/file_write.h"
 
 int main()
 {
@@ -30,10 +31,12 @@ int main()
 
     // my_util::SampleOfRvalueReference test_obj;
     // test_obj.myTestMain();
-    my_util::SampleOfRegistry test_obj;
+    // my_util::SampleOfRegistry test_obj;
     //
-    test_obj.EnumHardwareId(L"{4D36E96B-E325-11CE-BFC1-08002BE10318}");
+    // test_obj.EnumHardwareId(L"{4D36E96B-E325-11CE-BFC1-08002BE10318}");
 
+    my_util::FileWrite file(L"C:\\Users\\jixiang.li\\Desktop\\leetcode.txt");
+    file.writeText("Helloworld!");
     return 0;
 
 }

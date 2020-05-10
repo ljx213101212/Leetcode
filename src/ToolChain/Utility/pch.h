@@ -10,6 +10,7 @@
 #include <assert.h> 
 #ifdef _WIN32
 #include <winsock.h>
+#include <Windows.h>
 #else
 #include <arpa/inet.h>
 #endif
