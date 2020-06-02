@@ -7,6 +7,10 @@ namespace my_util
         createFile();
     }
 
+    FileWrite::~FileWrite(){
+        CloseHandle(file_handle);
+    }
+
     bool FileWrite::createFile()
     {
 

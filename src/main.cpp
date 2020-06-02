@@ -35,8 +35,13 @@ int main()
     //
     // test_obj.EnumHardwareId(L"{4D36E96B-E325-11CE-BFC1-08002BE10318}");
 
-    my_util::FileWrite file(L"C:\\Users\\jixiang.li\\Desktop\\leetcode.txt");
-    file.writeText("Helloworld!");
+    // my_util::FileWrite file(L"C:\\Users\\jixiang.li\\Desktop\\leetcode.txt");
+    // file.writeText("Helloworld! hahaha 😀中文");
+    string test = "wo de tian";
+    std::ofstream ofs;
+    ofs.open("C:\\Users\\jixiang.li\\Desktop\\leetcode.txt", std::ofstream::out | std::ofstream::app);
+    ofs<<test + "\r\n";
+    ofs.close();
     return 0;
 
 }

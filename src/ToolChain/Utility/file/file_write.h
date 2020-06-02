@@ -7,6 +7,7 @@ namespace my_util{
 
   public:
       FileWrite(std::wstring path);
+      ~FileWrite();
       bool createFile();
       bool writeText(std::string text);
 
