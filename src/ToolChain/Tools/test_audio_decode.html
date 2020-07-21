@@ -1,0 +1,147 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>test_audio_decode</title>
+<link rel="help" href="https://w3c.github.io/clipboard-apis/#async-clipboard-api">
+
+<body>
+    <h1>decodeAudioData example</h1>
+    <h3>credits to:</h3>
+    <div>https://mdn.github.io/webaudio-examples/decode-audio-data/</div>
+    <div>https://gist.github.com/gipi/3129800</div>
+    <input type="file" id="files" name="files[]" multiple />
+    <output id="list"></output>
+
+    <p>Note: This example does not work in Safari, due to some kind of bug.</p>
+
+    <button class="play">Play</button>
+    <button class="stop">Stop</button>
+
+    <h2>Set playback rate</h2>
+    <input class="playback-rate-control" type="range" min="0.25" max="3" step="0.05" value="1" disabled="disabled">
+    <span class="playback-rate-value">1.0</span>
+
+    <h2>Set loop start and loop end</h2>
+    <input class="loopstart-control" type="range" min="0" max="20" step="1" value="0" disabled="disabled">
+    <span class="loopstart-value">0</span>
+
+    <input class="loopend-control" type="range" min="0" max="20" step="1" value="0" disabled="disabled">
+    <span class="loopend-value">0</span>
+
+    <script>
+
+
+        let audioCtx;
+        let source;
+        let songLength;
+
+        const pre = document.querySelector('pre');
+        const myScript = document.querySelector('script');
+        const play = document.querySelector('.play');
+        const stop = document.querySelector('.stop');
+
+        const playbackControl = document.querySelector('.playback-rate-control');
+        const playbackValue = document.querySelector('.playback-rate-value');
+        playbackControl.setAttribute('disabled', 'disabled');
+
+        const loopstartControl = document.querySelector('.loopstart-control');
+        const loopstartValue = document.querySelector('.loopstart-value');
+        loopstartControl.setAttribute('disabled', 'disabled');
+
+        const loopendControl = document.querySelector('.loopend-control');
+        const loopendValue = document.querySelector('.loopend-value');
+        loopendControl.setAttribute('disabled', 'disabled');
+
+
+        function doTest(audioData) {
+            if (window.webkitAudioContext) {
+                audioCtx = new window.webkitAudioContext();
+            } else {
+                audioCtx = new window.AudioContext();
+            }
+            source = audioCtx.createBufferSource();
+            audioCtx.decodeAudioData(audioData, function (buffer) {
+                songLength = buffer.duration;
+                source.buffer = buffer;
+                source.playbackRate.value = playbackControl.value;
+                source.connect(audioCtx.destination);
+                source.loop = true;
+
+                loopstartControl.setAttribute('max', Math.floor(songLength));
+                loopendControl.setAttribute('max', Math.floor(songLength));
+            },
+
+                function (e) { "Error with decoding audio data" + e.error });
+
+        }
+
+        function handleFileSelect(evt) {
+            var files = evt.target.files; // FileList object
+
+            // Loop through the FileList and render image files as thumbnails.
+            for (var i = 0, f; f = files[i]; i++) {
+
+                var reader = new FileReader();
+
+                // Closure to capture the file information.
+                reader.onload = (function (theFile) {
+                    return function (e) {
+                        var raw = e.target.result;
+                        // https://developer.mozilla.org/en/JavaScript_typed_arrays
+                        var rawBytes = new Uint8Array(raw);
+                        doTest(rawBytes.buffer);
+                        // var hex = "";
+                        // for (var cycle = 0; cycle < raw.byteLength; cycle++) {
+                        //     hex += rawBytes[cycle].toString(16) + " ";
+                        //     // TODO: more elegance
+                        //     if (!((cycle + 1) % 8))
+                        //         hex += "\n";
+                        // }
+
+                        // // Render thumbnail.
+                        // var span = document.createElement('pre');
+                        // span.innerHTML = hex;
+                        // document.getElementById('list').insertBefore(span, null);
+                    };
+                })(f);
+
+                // Read in the image file as a data URL.
+                reader.readAsArrayBuffer(f);
+            }
+        }
+
+        document.getElementById('files').addEventListener('change', handleFileSelect, false);
+
+        // wire up buttons to stop and play audio, and range slider control
+
+        play.onclick = function () {
+            source.start(0);
+            play.setAttribute('disabled', 'disabled');
+            playbackControl.removeAttribute('disabled');
+            loopstartControl.removeAttribute('disabled');
+            loopendControl.removeAttribute('disabled');
+        }
+
+        stop.onclick = function () {
+            source.stop(0);
+            play.removeAttribute('disabled');
+            playbackControl.setAttribute('disabled', 'disabled');
+            loopstartControl.setAttribute('disabled', 'disabled');
+            loopendControl.setAttribute('disabled', 'disabled');
+        }
+
+        playbackControl.oninput = function () {
+            source.playbackRate.value = playbackControl.value;
+            playbackValue.innerHTML = playbackControl.value;
+        }
+
+        loopstartControl.oninput = function () {
+            source.loopStart = loopstartControl.value;
+            loopstartValue.innerHTML = loopstartControl.value;
+        }
+
+        loopendControl.oninput = function () {
+            source.loopEnd = loopendControl.value;
+            loopendValue.innerHTML = loopendControl.value;
+        }
+    </script>
+</body>
